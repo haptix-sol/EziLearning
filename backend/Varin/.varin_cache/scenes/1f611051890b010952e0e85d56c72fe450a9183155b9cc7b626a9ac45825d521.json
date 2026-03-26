@@ -1,0 +1,1123 @@
+{
+  "version": "v1",
+  "canvas": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "background_rgba": [
+      8,
+      14,
+      30,
+      255
+    ]
+  },
+  "duration_seconds": 24.0,
+  "camera": {
+    "x": 0.0,
+    "y": 0.0,
+    "zoom": 1.0,
+    "rotation_deg": 0.0
+  },
+  "layers": [
+    {
+      "id": "panel",
+      "z_index": 0,
+      "transform": {
+        "x": 640.0,
+        "y": 360.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          24,
+          42,
+          82,
+          120
+        ],
+        "stroke_rgba": [
+          118,
+          182,
+          255,
+          255
+        ],
+        "stroke_width": 3.0,
+        "opacity": 0.0,
+        "draw_progress": 1.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "rect",
+      "width": 1120.0,
+      "height": 560.0,
+      "corner_radius": 24.0
+    },
+    {
+      "id": "title",
+      "z_index": 0,
+      "transform": {
+        "x": 640.0,
+        "y": 110.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          232,
+          242,
+          255,
+          255
+        ],
+        "stroke_rgba": [
+          220,
+          220,
+          240,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 0.0,
+        "draw_progress": 1.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 1000.0
+      },
+      "type": "text",
+      "text": "Java OOP Roadmap",
+      "font_size": 54.0,
+      "font_family": null,
+      "font_path": null
+    },
+    {
+      "id": "m1",
+      "z_index": 0,
+      "transform": {
+        "x": 220.0,
+        "y": 320.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          58,
+          114,
+          218,
+          80
+        ],
+        "stroke_rgba": [
+          124,
+          186,
+          255,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 1.0,
+        "draw_progress": 0.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "rect",
+      "width": 192.0,
+      "height": 92.0,
+      "corner_radius": 14.0
+    },
+    {
+      "id": "m2",
+      "z_index": 0,
+      "transform": {
+        "x": 420.0,
+        "y": 320.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          66,
+          152,
+          118,
+          80
+        ],
+        "stroke_rgba": [
+          132,
+          236,
+          190,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 1.0,
+        "draw_progress": 0.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "rect",
+      "width": 192.0,
+      "height": 92.0,
+      "corner_radius": 14.0
+    },
+    {
+      "id": "m3",
+      "z_index": 0,
+      "transform": {
+        "x": 620.0,
+        "y": 320.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          242,
+          182,
+          96,
+          80
+        ],
+        "stroke_rgba": [
+          255,
+          216,
+          154,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 1.0,
+        "draw_progress": 0.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "rect",
+      "width": 192.0,
+      "height": 92.0,
+      "corner_radius": 14.0
+    },
+    {
+      "id": "m4",
+      "z_index": 0,
+      "transform": {
+        "x": 820.0,
+        "y": 320.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          174,
+          138,
+          248,
+          80
+        ],
+        "stroke_rgba": [
+          230,
+          214,
+          255,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 1.0,
+        "draw_progress": 0.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "rect",
+      "width": 192.0,
+      "height": 92.0,
+      "corner_radius": 14.0
+    },
+    {
+      "id": "m5",
+      "z_index": 0,
+      "transform": {
+        "x": 1020.0,
+        "y": 320.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          86,
+          124,
+          208,
+          80
+        ],
+        "stroke_rgba": [
+          158,
+          202,
+          255,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 1.0,
+        "draw_progress": 0.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "rect",
+      "width": 192.0,
+      "height": 92.0,
+      "corner_radius": 14.0
+    },
+    {
+      "id": "m1t",
+      "z_index": 0,
+      "transform": {
+        "x": 220.0,
+        "y": 320.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          230,
+          240,
+          255,
+          255
+        ],
+        "stroke_rgba": [
+          220,
+          220,
+          240,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 0.0,
+        "draw_progress": 1.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 172.0
+      },
+      "type": "text",
+      "text": "Class/Object",
+      "font_size": 24.0,
+      "font_family": null,
+      "font_path": null
+    },
+    {
+      "id": "m2t",
+      "z_index": 0,
+      "transform": {
+        "x": 420.0,
+        "y": 320.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          224,
+          246,
+          236,
+          255
+        ],
+        "stroke_rgba": [
+          220,
+          220,
+          240,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 0.0,
+        "draw_progress": 1.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 172.0
+      },
+      "type": "text",
+      "text": "Encapsulation",
+      "font_size": 24.0,
+      "font_family": null,
+      "font_path": null
+    },
+    {
+      "id": "m3t",
+      "z_index": 0,
+      "transform": {
+        "x": 620.0,
+        "y": 320.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          255,
+          236,
+          208,
+          255
+        ],
+        "stroke_rgba": [
+          220,
+          220,
+          240,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 0.0,
+        "draw_progress": 1.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 172.0
+      },
+      "type": "text",
+      "text": "Abstraction",
+      "font_size": 24.0,
+      "font_family": null,
+      "font_path": null
+    },
+    {
+      "id": "m4t",
+      "z_index": 0,
+      "transform": {
+        "x": 820.0,
+        "y": 320.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          240,
+          230,
+          255,
+          255
+        ],
+        "stroke_rgba": [
+          220,
+          220,
+          240,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 0.0,
+        "draw_progress": 1.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 172.0
+      },
+      "type": "text",
+      "text": "Inheritance",
+      "font_size": 24.0,
+      "font_family": null,
+      "font_path": null
+    },
+    {
+      "id": "m5t",
+      "z_index": 0,
+      "transform": {
+        "x": 1020.0,
+        "y": 320.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          224,
+          236,
+          255,
+          255
+        ],
+        "stroke_rgba": [
+          220,
+          220,
+          240,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 0.0,
+        "draw_progress": 1.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 172.0
+      },
+      "type": "text",
+      "text": "Polymorphism",
+      "font_size": 24.0,
+      "font_family": null,
+      "font_path": null
+    },
+    {
+      "id": "a12",
+      "z_index": 0,
+      "transform": {
+        "x": 320.0,
+        "y": 320.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          65,
+          127,
+          224,
+          255
+        ],
+        "stroke_rgba": [
+          218,
+          232,
+          255,
+          255
+        ],
+        "stroke_width": 3.0,
+        "opacity": 1.0,
+        "draw_progress": 0.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "arrow",
+      "x1": -65.0,
+      "y1": 0.0,
+      "x2": 65.0,
+      "y2": 0.0,
+      "tip_length": 18.0,
+      "tip_width": 12.0
+    },
+    {
+      "id": "a23",
+      "z_index": 0,
+      "transform": {
+        "x": 520.0,
+        "y": 320.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          65,
+          127,
+          224,
+          255
+        ],
+        "stroke_rgba": [
+          218,
+          232,
+          255,
+          255
+        ],
+        "stroke_width": 3.0,
+        "opacity": 1.0,
+        "draw_progress": 0.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "arrow",
+      "x1": -65.0,
+      "y1": 0.0,
+      "x2": 65.0,
+      "y2": 0.0,
+      "tip_length": 18.0,
+      "tip_width": 12.0
+    },
+    {
+      "id": "a34",
+      "z_index": 0,
+      "transform": {
+        "x": 720.0,
+        "y": 320.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          65,
+          127,
+          224,
+          255
+        ],
+        "stroke_rgba": [
+          218,
+          232,
+          255,
+          255
+        ],
+        "stroke_width": 3.0,
+        "opacity": 1.0,
+        "draw_progress": 0.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "arrow",
+      "x1": -65.0,
+      "y1": 0.0,
+      "x2": 65.0,
+      "y2": 0.0,
+      "tip_length": 18.0,
+      "tip_width": 12.0
+    },
+    {
+      "id": "a45",
+      "z_index": 0,
+      "transform": {
+        "x": 920.0,
+        "y": 320.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          65,
+          127,
+          224,
+          255
+        ],
+        "stroke_rgba": [
+          218,
+          232,
+          255,
+          255
+        ],
+        "stroke_width": 3.0,
+        "opacity": 1.0,
+        "draw_progress": 0.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "arrow",
+      "x1": -65.0,
+      "y1": 0.0,
+      "x2": 65.0,
+      "y2": 0.0,
+      "tip_length": 18.0,
+      "tip_width": 12.0
+    },
+    {
+      "id": "cap",
+      "z_index": 0,
+      "transform": {
+        "x": 640.0,
+        "y": 560.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          226,
+          238,
+          255,
+          255
+        ],
+        "stroke_rgba": [
+          220,
+          220,
+          240,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 0.0,
+        "draw_progress": 1.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 1080.0
+      },
+      "type": "text",
+      "text": "Use this exact order for explanation and interviews",
+      "font_size": 30.0,
+      "font_family": null,
+      "font_path": null
+    }
+  ],
+  "animations": [],
+  "camera_animations": [],
+  "timeline": {
+    "specs": [
+      {
+        "target": "panel",
+        "kind": "preset_enter_soft",
+        "start": 0.0,
+        "run_time": 0.9,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "title",
+        "kind": "preset_text_typewriter",
+        "start": 0.0,
+        "run_time": 1.0,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "m1",
+        "kind": "draw_border_then_fill",
+        "start": 1.0,
+        "run_time": 0.7,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_in_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "m2",
+        "kind": "draw_border_then_fill",
+        "start": 1.3,
+        "run_time": 0.7,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_in_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "m3",
+        "kind": "draw_border_then_fill",
+        "start": 1.6,
+        "run_time": 0.7,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_in_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "m4",
+        "kind": "draw_border_then_fill",
+        "start": 1.9,
+        "run_time": 0.7,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_in_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "m5",
+        "kind": "draw_border_then_fill",
+        "start": 2.2,
+        "run_time": 0.7,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_in_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "a12",
+        "kind": "create",
+        "start": 2.4,
+        "run_time": 0.5,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_in_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "a23",
+        "kind": "create",
+        "start": 2.6,
+        "run_time": 0.5,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_in_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "a34",
+        "kind": "create",
+        "start": 2.8,
+        "run_time": 0.5,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_in_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "a45",
+        "kind": "create",
+        "start": 3.0,
+        "run_time": 0.5,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_in_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "m1t",
+        "kind": "preset_text_pop_in",
+        "start": 2.2,
+        "run_time": 0.45,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "m2t",
+        "kind": "preset_text_pop_in",
+        "start": 2.35,
+        "run_time": 0.45,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "m3t",
+        "kind": "preset_text_pop_in",
+        "start": 2.5,
+        "run_time": 0.45,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "m4t",
+        "kind": "preset_text_pop_in",
+        "start": 2.65,
+        "run_time": 0.45,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "m5t",
+        "kind": "preset_text_pop_in",
+        "start": 2.8,
+        "run_time": 0.45,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "cap",
+        "kind": "preset_text_typewriter",
+        "start": 3.4,
+        "run_time": 1.0,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "title",
+        "kind": "preset_emphasis_pulse",
+        "start": 6.2,
+        "run_time": 1.0,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "there_and_back",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      }
+    ],
+    "lifecycle": [],
+    "segments": [
+      {
+        "segment_type": "play",
+        "start": 0.0,
+        "run_time": 24.0,
+        "spec_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      }
+    ],
+    "groups": []
+  }
+}

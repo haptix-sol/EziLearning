@@ -1,0 +1,19 @@
+[package]
+name = "varin-cli"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+
+[features]
+default = []
+wgpu-backend = ["varin-render/wgpu-backend"]
+
+[dependencies]
+anyhow.workspace = true
+clap.workspace = true
+rayon.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2 = "0.10"
+varin-core = { path = "../varin-core" }
+varin-render = { path = "../varin-render" }

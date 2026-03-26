@@ -1,0 +1,39 @@
+{
+  "name": "ezilearning-cursor-proxy",
+  "version": "2.7.5",
+  "description": "Local Cursor chat proxy for EziLearning (Anthropic / OpenAI-compatible)",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test:handler-truncation": "node test/unit-handler-truncation.mjs",
+    "test:openai-stream-truncation": "node test/unit-openai-stream-truncation.mjs",
+    "test:image-paths": "node test/unit-image-paths.mjs",
+    "test:openai-image-file": "node test/unit-openai-image-file.mjs",
+    "test:openai-chat-input": "node test/unit-openai-chat-input.mjs",
+    "test:vision": "node test/unit-vision.mjs",
+    "test:unit": "node test/unit-tolerant-parse.mjs",
+    "test:tool-fixer": "node test/unit-tool-fixer.mjs",
+    "test:openai-compat": "node test/unit-openai-compat.mjs",
+    "test:all": "node test/unit-tolerant-parse.mjs && node test/unit-tool-fixer.mjs && node test/unit-openai-compat.mjs && node test/unit-proxy-agent.mjs && node test/unit-image-paths.mjs && node test/unit-vision.mjs && node test/unit-openai-chat-input.mjs && node test/unit-openai-image-file.mjs && node test/unit-handler-truncation.mjs && node test/unit-openai-stream-truncation.mjs",
+    "test:e2e": "node test/e2e-chat.mjs",
+    "test:agentic": "node test/e2e-agentic.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "eventsource-parser": "^3.0.1",
+    "express": "^5.1.0",
+    "tesseract.js": "^7.0.0",
+    "undici": "^7.22.0",
+    "uuid": "^11.1.0",
+    "yaml": "^2.7.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.0",
+    "@types/uuid": "^10.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0"
+  }
+}

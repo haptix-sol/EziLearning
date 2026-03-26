@@ -1,0 +1,62 @@
+# Binaries
+*.exe
+*.dll
+*.so
+*.dylib
+ezilearning-cursor-proxy
+cursor2api
+
+# Go
+vendor/
+*.test
+
+# Node
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+.cursor/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Environment
+.env
+.env.local
+
+# Build
+dist/
+build/
+*.traineddata
+
+# Config (contains sensitive tokens, use config.yaml.example as template)
+config.yaml
+
+# Screenshots (dev artifacts)
+*.png
+# Test result artifacts
+test/*-results*.json
+test/ctf-*-results.json
+
+# Claude local settings
+.claude/
+
+# Vue UI build output and dependencies
+public/vue/
+vue-ui/node_modules/
+# Obsolete local notes
+CLAUDE.md
+config-dev.yaml
+config-local.yaml
+deploy-cursor2api.sh
+deploy-gost.sh
+docker-compose-dev.yml
+docker-compose-local.yml

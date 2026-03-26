@@ -1,0 +1,439 @@
+{
+  "version": "v1",
+  "canvas": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "background_rgba": [
+      8,
+      14,
+      30,
+      255
+    ]
+  },
+  "duration_seconds": 24.0,
+  "camera": {
+    "x": 0.0,
+    "y": 0.0,
+    "zoom": 1.0,
+    "rotation_deg": 0.0
+  },
+  "layers": [
+    {
+      "id": "title",
+      "z_index": 0,
+      "transform": {
+        "x": 640.0,
+        "y": 92.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          232,
+          242,
+          255,
+          255
+        ],
+        "stroke_rgba": [
+          220,
+          220,
+          240,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 0.0,
+        "draw_progress": 1.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "text",
+      "text": "Class vs Object",
+      "font_size": 52.0,
+      "font_family": null,
+      "font_path": null
+    },
+    {
+      "id": "left",
+      "z_index": 0,
+      "transform": {
+        "x": 360.0,
+        "y": 340.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          60,
+          112,
+          214,
+          76
+        ],
+        "stroke_rgba": [
+          122,
+          186,
+          255,
+          255
+        ],
+        "stroke_width": 3.0,
+        "opacity": 1.0,
+        "draw_progress": 0.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "rect",
+      "width": 500.0,
+      "height": 390.0,
+      "corner_radius": 20.0
+    },
+    {
+      "id": "right",
+      "z_index": 0,
+      "transform": {
+        "x": 920.0,
+        "y": 340.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          72,
+          168,
+          126,
+          76
+        ],
+        "stroke_rgba": [
+          134,
+          236,
+          192,
+          255
+        ],
+        "stroke_width": 3.0,
+        "opacity": 1.0,
+        "draw_progress": 0.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "rect",
+      "width": 500.0,
+      "height": 390.0,
+      "corner_radius": 20.0
+    },
+    {
+      "id": "lt",
+      "z_index": 0,
+      "transform": {
+        "x": 360.0,
+        "y": 340.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          226,
+          237,
+          255,
+          255
+        ],
+        "stroke_rgba": [
+          220,
+          220,
+          240,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 0.0,
+        "draw_progress": 1.0,
+        "line_height_mult": 1.14,
+        "text_max_width": 430.0
+      },
+      "type": "text",
+      "text": "class BankAccount {\n  balance\n  deposit()\n}",
+      "font_size": 27.0,
+      "font_family": null,
+      "font_path": null
+    },
+    {
+      "id": "rt",
+      "z_index": 0,
+      "transform": {
+        "x": 920.0,
+        "y": 340.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          224,
+          246,
+          236,
+          255
+        ],
+        "stroke_rgba": [
+          220,
+          220,
+          240,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 0.0,
+        "draw_progress": 1.0,
+        "line_height_mult": 1.14,
+        "text_max_width": 430.0
+      },
+      "type": "text",
+      "text": "accountA\nowner = Ravi\nbalance = 5000",
+      "font_size": 27.0,
+      "font_family": null,
+      "font_path": null
+    },
+    {
+      "id": "arr",
+      "z_index": 0,
+      "transform": {
+        "x": 640.0,
+        "y": 340.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          65,
+          127,
+          224,
+          255
+        ],
+        "stroke_rgba": [
+          225,
+          235,
+          255,
+          255
+        ],
+        "stroke_width": 4.0,
+        "opacity": 1.0,
+        "draw_progress": 0.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "arrow",
+      "x1": -130.0,
+      "y1": 0.0,
+      "x2": 130.0,
+      "y2": 0.0,
+      "tip_length": 18.0,
+      "tip_width": 12.0
+    }
+  ],
+  "animations": [],
+  "camera_animations": [],
+  "timeline": {
+    "specs": [
+      {
+        "target": "title",
+        "kind": "write",
+        "start": 0.0,
+        "run_time": 0.9,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "left",
+        "kind": "draw_border_then_fill",
+        "start": 1.0,
+        "run_time": 0.9,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_in_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "right",
+        "kind": "draw_border_then_fill",
+        "start": 1.4,
+        "run_time": 0.9,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_in_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "lt",
+        "kind": "preset_text_typewriter",
+        "start": 1.8,
+        "run_time": 0.95,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "arr",
+        "kind": "create",
+        "start": 2.4,
+        "run_time": 0.8,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_in_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "rt",
+        "kind": "preset_text_typewriter",
+        "start": 2.9,
+        "run_time": 0.95,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "arr",
+        "kind": "preset_emphasis_pulse",
+        "start": 5.0,
+        "run_time": 0.9,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "there_and_back",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      }
+    ],
+    "lifecycle": [],
+    "segments": [
+      {
+        "segment_type": "play",
+        "start": 0.0,
+        "run_time": 24.0,
+        "spec_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      }
+    ],
+    "groups": []
+  }
+}

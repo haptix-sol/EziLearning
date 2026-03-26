@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>!function(){var K='ezilearning_cursor_proxy_theme',O='cursor2api_theme';var t=localStorage.getItem(K);if(t==null){t=localStorage.getItem(O);if(t!=null){localStorage.setItem(K,t);localStorage.removeItem(O)}}if(!t){t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)}()</script>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EziLearning — Request logs</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/public/logs.css">
+</head>
+<body>
+<div class="app">
+  <div class="hdr">
+    <h1><span class="ic">⚡</span> Request logs</h1>
+    <div class="hdr-stats">
+      <div class="sc"><b id="sT">0</b> req</div>
+      <div class="sc">✓<b id="sS">0</b></div>
+      <div class="sc">✗<b id="sE">0</b></div>
+      <div class="sc"><b id="sA">-</b> ms avg</div>
+      <div class="sc">⚡<b id="sF">-</b> ms TTFT</div>
+    </div>
+    <div class="hdr-r">
+      <button class="hdr-btn" id="clearBtn" onclick="clearLogs()">🗑 Clear</button>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme"></button>
+      <div class="conn on" id="conn"><div class="d"></div><span>Connected</span></div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="side">
+      <div class="search"><div class="sw"><input class="si" id="searchIn" placeholder="Search (Ctrl+K)"/></div></div>
+      <div class="tbar" id="tbar">
+        <button class="tb a" data-t="all" onclick="setTF('all',this)">All</button>
+        <button class="tb" data-t="today" onclick="setTF('today',this)">Today</button>
+        <button class="tb" data-t="2d" onclick="setTF('2d',this)">2 days</button>
+        <button class="tb" data-t="7d" onclick="setTF('7d',this)">7 days</button>
+        <button class="tb" data-t="30d" onclick="setTF('30d',this)">30 days</button>
+      </div>
+      <div class="fbar" id="fbar">
+        <button class="fb a" data-f="all" onclick="fR('all',this)">All<span class="fc" id="cA">0</span></button>
+        <button class="fb" data-f="success" onclick="fR('success',this)">✓<span class="fc" id="cS">0</span></button>
+        <button class="fb" data-f="error" onclick="fR('error',this)">✗<span class="fc" id="cE">0</span></button>
+        <button class="fb" data-f="processing" onclick="fR('processing',this)">◌<span class="fc" id="cP">0</span></button>
+        <button class="fb" data-f="intercepted" onclick="fR('intercepted',this)">⊘<span class="fc" id="cI">0</span></button>
+      </div>
+      <div class="rlist" id="rlist">
+        <div class="empty"><div class="ic">📡</div><p>Waiting for requests…</p></div>
+      </div>
+    </div>
+    <div class="dp">
+      <div class="dh">
+        <h2>🔍 <span id="dTitle">Live log stream</span></h2>
+        <div class="dh-acts">
+          <label class="auto-expand"><input type="checkbox" id="autoExpand"/>Auto-expand details</label>
+          <div class="lvf" id="lvF">
+            <button class="lvb a" onclick="sL('all',this)">All</button>
+            <button class="lvb" onclick="sL('info',this)">Info</button>
+            <button class="lvb" onclick="sL('warn',this)">Warn</button>
+            <button class="lvb" onclick="sL('error',this)">Error</button>
+          </div>
+        </div>
+      </div>
+      <div class="scard" id="scard"><div class="sgrid" id="sgrid"></div></div>
+      <div class="ptl" id="ptl"><div class="ptl-lbl">Phase timing</div><div class="ptl-bar" id="pbar"></div></div>
+      <div class="tabs" id="tabs" style="display:none">
+        <div class="tab a" data-tab="logs" onclick="setTab('logs',this)">📋 Logs</div>
+        <div class="tab" data-tab="request" onclick="setTab('request',this)">📥 Request</div>
+        <div class="tab" data-tab="prompts" onclick="setTab('prompts',this)">💬 Prompts</div>
+        <div class="tab" data-tab="response" onclick="setTab('response',this)">📤 Response</div>
+      </div>
+      <div class="tab-content" id="tabContent">
+        <div class="llist" id="logList">
+          <div class="empty"><div class="ic">📋</div><p>Logs appear here in real time.</p><p class="sub">Send a request through the proxy to see the full trace.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/public/logs.js"></script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+{
+  "version": "v1",
+  "scenes": [
+    {
+      "id": "s01_three_topics",
+      "visual_instruction": "Horizontal flow of three short topic cards: Generative AI, Transformers, Agentic AI. Single routing between boxes, no extra connector lines.",
+      "narration": "Welcome. In the next few minutes we will unpack three ideas you will see everywhere in modern AI. First, generative AI: systems that produce new content. Second, the transformer: the architecture most large language models are built on. Third, agentic AI: software that plans steps and uses tools, not just one-shot answers. We will connect them in a simple story from data to helpful action.",
+      "scene_template": "flow_chain",
+      "template_params": {
+        "title": "Three Ideas, One Story",
+        "count": 3,
+        "labels": ["Generative AI", "Transformers", "Agentic AI"],
+        "spacing": 268,
+        "routing_mode": "elbow_auto",
+        "multi_arrow": false,
+        "layout_padding": 28,
+        "label_padding": 28
+      },
+      "duration_seconds": 32
+    },
+    {
+      "id": "s02_generative_ai",
+      "visual_instruction": "Title plus recap board with short bullet lines; text stays horizontal, readable.",
+      "narration": "Generative AI means the model creates something new from input, not only classifying or scoring. At a high level, it learns patterns from huge amounts of text, images, or other data, then samples new examples that look like the training distribution. A practical example is drafting an email from bullet points. Another is turning a sketch into image variations. The output is new each time, within the style the model learned.",
+      "scene_template": "recap_board",
+      "template_params": {
+        "title": "Generative AI",
+        "recap": "• Creates new content (text, images, audio, code)\n• Learns patterns from data, then samples plausible outputs\n• Example: outline in → draft paragraph out\n• Not magic: quality depends on data, size, and use case"
+      },
+      "duration_seconds": 36
+    },
+    {
+      "id": "s03_transformer_shape",
+      "visual_instruction": "Org diagram: one root node with a few child nodes below; connectors use elbow routing, no spinning labels.",
+      "narration": "The transformer architecture is the engine behind most generative language models today. Text is split into tokens. Each layer mixes information across the sequence using attention, so every position can focus on the words that matter. Feed-forward layers refine features. Stacks of these blocks produce logits, which turn into probabilities for the next token. That next-token loop is what makes long answers possible, one piece at a time.",
+      "scene_template": "org_diagram",
+      "template_params": {
+        "title": "Transformer (high level)",
+        "count": 4,
+        "spacing": 230,
+        "routing_mode": "elbow_auto",
+        "layout_padding": 26,
+        "label_padding": 26,
+        "labels": [
+          "Transformer stack",
+          "Tokens in",
+          "Attention mix",
+          "FFN refine",
+          "Next-token logits"
+        ]
+      },
+      "duration_seconds": 38
+    },
+    {
+      "id": "s04_agentic_ai",
+      "visual_instruction": "Swimlane-style process: distinct horizontal lanes, steps read left to right without rotated text.",
+      "narration": "Agentic AI adds a control loop around a generative model. The system reads a goal, breaks it into steps, calls tools like search or code execution, observes results, and continues until the task is done or it needs the user. Compare that to a single chat reply with no follow-up actions. Examples include research assistants that cite sources, or coding agents that run tests and fix errors. The generative model proposes; the agent loop commits and verifies.",
+      "scene_template": "process_swimlane",
+      "template_params": {
+        "title": "Agentic AI loop",
+        "count": 3,
+        "spacing": 280,
+        "routing_mode": "elbow_auto",
+        "layout_padding": 24,
+        "label_padding": 24,
+        "labels": [
+          "Read goal & context",
+          "Plan next step",
+          "Call tools, observe"
+        ]
+      },
+      "duration_seconds": 36
+    },
+    {
+      "id": "s05_how_they_connect",
+      "visual_instruction": "Four boxes in a row: data and prompts, transformer engine, generated output, agent with tools. One connector path between each pair; generous spacing to avoid overlap.",
+      "narration": "Here is how the pieces fit. Training data and your prompt feed a transformer-based generative model. The model outputs text or structured plans. An agentic layer can take that output, run tools, and feed observations back into the model for another round. So transformers are often the brain, generative training is how that brain learns to produce language, and agents are the hands and eyes that use the brain in the real world.",
+      "scene_template": "flow_chain",
+      "template_params": {
+        "title": "From Data to Action",
+        "count": 4,
+        "labels": ["Data + prompt", "Transformer", "Generation", "Agent + tools"],
+        "spacing": 218,
+        "routing_mode": "elbow_auto",
+        "multi_arrow": false,
+        "layout_padding": 30,
+        "label_padding": 30
+      },
+      "duration_seconds": 34
+    },
+    {
+      "id": "s06_takeaways",
+      "visual_instruction": "Final recap board with concise bullet summary; static text, no rotation.",
+      "narration": "To recap. Generative AI creates new content by learning patterns and sampling. Transformers implement scalable attention for sequence modeling and power most modern LLMs. Agentic systems wrap those models in planning and tool use. Together they describe much of what you see in assistants today. Thanks for watching.",
+      "scene_template": "recap_board",
+      "template_params": {
+        "title": "Takeaways",
+        "recap": "• Generative AI: learn patterns → produce new outputs\n• Transformers: tokenized text, attention, stacked layers, next-token prediction\n• Agentic AI: goals, steps, tools, feedback loops\n• Together: a capable model plus a loop that acts in the world"
+      },
+      "duration_seconds": 30
+    }
+  ]
+}

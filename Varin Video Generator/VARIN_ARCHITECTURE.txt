@@ -1,0 +1,131 @@
+Varin Architecture Guide
+========================
+
+This document explains architecture and gives diagram text.
+You can keep exported architecture images in the same folder as this file.
+
+Suggested image filenames (if you export diagrams):
+- VARIN_ARCHITECTURE_OVERVIEW.png
+- VARIN_RENDER_PIPELINE.png
+- VARIN_STORYBOARD_PIPELINE.png
+
+
+1) High-level architecture
+--------------------------
+Two-part system:
+
+1. Varin (Rust engine + CLI)
+   - varin-core: data model, validation, timeline resolution
+   - varin-render: frame rasterization + ffmpeg encoding
+   - varin-cli: orchestration commands (render, storyboard, build, sync, etc.)
+
+2. VarinStudio (React + Node API)
+   - React UI for prompt/JSON workflow
+   - Express server calling varin-cli using cargo run
+
+
+2) Text diagram (overview)
+--------------------------
++------------------+        HTTP /api/*         +-------------------------+
+|  VarinStudio UI  | -------------------------> |  VarinStudio server.mjs |
+|  (React + Vite)  |                            |  (Express orchestration)|
++------------------+                            +------------+------------+
+                                                            |
+                                                            | spawn cargo run -p varin-cli
+                                                            v
+                                                +-----------+-----------+
+                                                |      varin-cli        |
+                                                |  command dispatcher    |
+                                                +-----------+-----------+
+                                                            |
+                           +--------------------------------+-------------------------------+
+                           |                                                                |
+                           v                                                                v
+                 +---------+----------+                                          +----------+----------+
+                 |  storyboard.rs     |                                          |   render_scene      |
+                 |  parse/tts/retime  |                                          |   path (single)     |
+                 +---------+----------+                                          +----------+----------+
+                           |                                                                |
+                           v                                                                v
+                 +---------+----------+                                          +----------+----------+
+                 | varin-core Scene   |                                          | varin-render        |
+                 | validate/resolve   |                                          | raster + ffmpeg     |
+                 +---------+----------+                                          +----------+----------+
+                           |                                                                |
+                           +-------------------------> Output MP4/SRT <---------------------+
+
+
+3) Mermaid diagram source (overview)
+------------------------------------
+Copy this into any Mermaid renderer and export image.
+
+flowchart LR
+  ui[VarinStudioUI] -->|"POST /api/*"| api[VarinStudioServer]
+  api -->|"cargo run -p varin-cli"| cli[VarinCLI]
+  cli --> sb[StoryboardPipeline]
+  cli --> sc[SingleScenePipeline]
+  sb --> core[VarinCoreSceneModel]
+  sc --> core
+  core --> render[VarinRender]
+  sb --> tts[EdgeTTSAndCache]
+  render -->|"RGBA frames -> ffmpeg"| ffm[FfmpegEncoder]
+  ffm --> out[OutputMp4]
+  sb --> srt[SubtitleSrtOutput]
+
+
+4) Storyboard pipeline detail
+-----------------------------
+1. Read storyboard JSON (explicit scenes or legacy brief mode)
+2. For each scene:
+   - use scene_path, or
+   - compile scene_explanatory DSL to Scene
+3. Validate Scene objects
+4. Prepare narration audio (edge-tts + ffprobe duration)
+5. Retiming to fit narration-aware pacing
+6. Render each scene segment (raw mp4)
+7. Mux segment with audio
+8. Concat all segments into final mp4
+9. Write SRT captions (caption or narration fallback)
+
+
+5) Render internals
+-------------------
+- varin-render chooses backend:
+  - default: skia CPU renderer
+  - optional: wgpu backend for compatible primitive subset
+- Frames are generated in chunks (RAM-aware), in parallel (CPU-aware)
+- RGBA frames are streamed to ffmpeg stdin
+- Encoder selection:
+  - h264_nvenc if available and supported
+  - otherwise libx264
+
+
+6) Main architecture files
+--------------------------
+Engine:
+- Varin/crates/varin-cli/src/main.rs
+- Varin/crates/varin-cli/src/storyboard.rs
+- Varin/crates/varin-cli/src/cache.rs
+- Varin/crates/varin-core/src/lib.rs
+- Varin/crates/varin-core/src/builder.rs
+- Varin/crates/varin-render/src/lib.rs
+- Varin/crates/varin-render/src/wgpu_backend.rs
+
+Contracts:
+- Varin/schemas/scene.v1.json
+- Varin/docs/FORMAT.md
+- Varin/docs/LLM_SCENE_PROMPT_TEMPLATE.md
+
+Studio:
+- VarinStudio/server/server.mjs
+- VarinStudio/src/App.tsx
+- VarinStudio/vite.config.ts
+
+
+7) Operational caveats
+----------------------
+- README/example list may not exactly match current files in examples/
+- sync timing can differ from final retimed storyboard render timing
+- edge-tts availability/network can affect narration stage
+- cache location depends on current working directory unless VARIN_CACHE_DIR is set
+

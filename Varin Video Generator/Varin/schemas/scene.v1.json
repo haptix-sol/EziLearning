@@ -1,0 +1,472 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://varin.local/schemas/scene.v1.json",
+  "title": "Varin Scene v1",
+  "type": "object",
+  "required": ["version", "canvas", "duration_seconds", "layers"],
+  "properties": {
+    "version": { "type": "string", "const": "v1" },
+    "duration_seconds": { "type": "number", "exclusiveMinimum": 0 },
+    "camera": { "$ref": "#/$defs/camera_state" },
+    "meta": { "$ref": "#/$defs/scene_meta" },
+    "canvas": {
+      "type": "object",
+      "required": ["width", "height", "fps"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "fps": { "type": "integer", "minimum": 1 },
+        "background_rgba": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 0, "maximum": 255 },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      }
+    },
+    "layers": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/layer" }
+    },
+    "animations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/track" },
+      "default": []
+    },
+    "camera_animations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/camera_track" },
+      "default": []
+    },
+    "timeline": {
+      "$ref": "#/$defs/scene_timeline"
+    }
+  },
+  "$defs": {
+    "camera_state": {
+      "type": "object",
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "zoom": { "type": "number", "exclusiveMinimum": 0 },
+        "rotation_deg": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "scene_meta": {
+      "type": "object",
+      "properties": {
+        "visual_instruction": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "rgba": {
+      "type": "array",
+      "items": { "type": "integer", "minimum": 0, "maximum": 255 },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "transform": {
+      "type": "object",
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "scale_x": { "type": "number" },
+        "scale_y": { "type": "number" },
+        "rotation_deg": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "style": {
+      "type": "object",
+      "properties": {
+        "fill_rgba": { "$ref": "#/$defs/rgba" },
+        "stroke_rgba": { "$ref": "#/$defs/rgba" },
+        "stroke_width": { "type": "number", "minimum": 0 },
+        "opacity": { "type": "number", "minimum": 0, "maximum": 1 },
+        "draw_progress": { "type": "number", "minimum": 0, "maximum": 1 }
+        ,
+        "line_height_mult": { "type": "number", "exclusiveMinimum": 0 },
+        "text_max_width": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "layer": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "z_index": { "type": "integer" },
+        "transform": { "$ref": "#/$defs/transform" },
+        "style": { "$ref": "#/$defs/style" },
+        "type": { "type": "string", "enum": ["rect", "circle", "ellipse", "line", "arrow", "polyline", "polygon", "cube", "cuboid", "text", "image"] },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 },
+        "corner_radius": { "type": "number", "minimum": 0 },
+        "radius": { "type": "number", "exclusiveMinimum": 0 },
+        "radius_x": { "type": "number", "exclusiveMinimum": 0 },
+        "radius_y": { "type": "number", "exclusiveMinimum": 0 },
+        "x1": { "type": "number" },
+        "y1": { "type": "number" },
+        "x2": { "type": "number" },
+        "y2": { "type": "number" },
+        "tip_length": { "type": "number", "exclusiveMinimum": 0 },
+        "tip_width": { "type": "number", "exclusiveMinimum": 0 },
+        "size": { "type": "number", "exclusiveMinimum": 0 },
+        "depth": { "type": "number", "exclusiveMinimum": 0 },
+        "depth_ratio": { "type": "number", "exclusiveMinimum": 0 },
+        "projection_x": { "type": "number" },
+        "projection_y": { "type": "number" },
+        "points": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": { "type": "number" },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "text": { "type": "string" },
+        "font_size": { "type": "number", "exclusiveMinimum": 0 },
+        "font_family": { "type": "string", "minLength": 1 },
+        "font_path": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "rect" } } },
+          "then": { "required": ["width", "height"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "circle" } } },
+          "then": { "required": ["radius"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "ellipse" } } },
+          "then": { "required": ["radius_x", "radius_y"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "line" } } },
+          "then": { "required": ["x1", "y1", "x2", "y2"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "arrow" } } },
+          "then": { "required": ["x1", "y1", "x2", "y2"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "polyline" } } },
+          "then": {
+            "required": ["points"],
+            "properties": { "points": { "minItems": 2 } }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "polygon" } } },
+          "then": {
+            "required": ["points"],
+            "properties": { "points": { "minItems": 3 } }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "cube" } } },
+          "then": { "required": ["size"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "cuboid" } } },
+          "then": { "required": ["width", "height", "depth"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "text" } } },
+          "then": { "required": ["text"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "image" } } },
+          "then": { "required": ["path", "width", "height"] }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "easing": {
+      "type": "string",
+      "enum": ["linear", "ease_in", "ease_out", "ease_in_out", "rush_into", "rush_from", "there_and_back", "overshoot"]
+    },
+    "camera_track": {
+      "type": "object",
+      "required": ["track_type", "property", "keyframes"],
+      "properties": {
+        "track_type": { "type": "string", "const": "float" },
+        "property": { "enum": ["x", "y", "zoom", "rotation_deg"] },
+        "keyframes": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/float_keyframe" } }
+      },
+      "additionalProperties": false
+    },
+    "animation_kind": {
+      "type": "string",
+      "enum": [
+        "create",
+        "show_increasing_subsets",
+        "write",
+        "draw_border_then_fill",
+        "uncreate",
+        "transform",
+        "replacement_transform",
+        "fade_in",
+        "fade_out",
+        "v_fade_in",
+        "v_fade_out",
+        "fade_transform",
+        "fade_transform_pieces",
+        "rotate",
+        "grow_from_center",
+        "grow_from_point",
+        "move_along_path",
+        "homotopy",
+        "phase_flow"
+        ,
+        "preset_enter_soft",
+        "preset_enter_rise",
+        "preset_exit_soft",
+        "preset_exit_drop",
+        "preset_emphasis_pulse",
+        "preset_transition_morph",
+        "preset_transition_crossfade",
+        "preset_text_typewriter",
+        "preset_text_pop_in",
+        "preset_text_glow_pulse",
+        "preset_shape_draw_rect",
+        "preset_shape_draw_square",
+        "preset_shape_draw_circle",
+        "preset_shape_draw_line",
+        "preset_shape_draw_polygon",
+        "preset_arrow_outside_point",
+        "preset_connector_safe_route",
+        "preset_box_with_subbox_inside",
+        "preset_box_with_subbox_overlap",
+        "preset_formula_step_reveal",
+        "preset_vector_flow_block_reveal"
+      ]
+    },
+    "animation_spec": {
+      "type": "object",
+      "required": ["target", "kind"],
+      "properties": {
+        "target": { "type": "string", "minLength": 1 },
+        "kind": { "$ref": "#/$defs/animation_kind" },
+        "start": { "type": "number", "minimum": 0 },
+        "run_time": { "type": "number", "exclusiveMinimum": 0 },
+        "lag_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "group_index": { "type": "integer", "minimum": 0 },
+        "group_size": { "type": "integer", "minimum": 1 },
+        "easing": { "$ref": "#/$defs/easing" },
+        "shift_x": { "type": "number" },
+        "shift_y": { "type": "number" },
+        "scale_from": { "type": "number", "exclusiveMinimum": 0 },
+        "scale_to": { "type": "number", "exclusiveMinimum": 0 },
+        "path_arc_deg": { "type": "number" },
+        "path_points": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": { "type": "number" },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "minItems": 2
+        },
+        "homotopy_amp_x": { "type": "number" },
+        "homotopy_amp_y": { "type": "number" },
+        "homotopy_freq": { "type": "number", "minimum": 0 },
+        "homotopy_phase_deg": { "type": "number" },
+        "replace_with": { "type": "string", "minLength": 1 },
+        "to_x": { "type": "number" },
+        "to_y": { "type": "number" },
+        "to_scale_x": { "type": "number" },
+        "to_scale_y": { "type": "number" },
+        "to_rotation_deg": { "type": "number" },
+        "axis_x": { "type": "number" },
+        "axis_y": { "type": "number" },
+        "axis_width": { "type": "number", "exclusiveMinimum": 0 },
+        "axis_height": { "type": "number", "exclusiveMinimum": 0 },
+        "label_text": { "type": "string" },
+        "layout_target": { "type": "string", "minLength": 1 },
+        "sub_box_mode": { "type": "string", "enum": ["inside", "overlap"] },
+        "sub_box_offset_x": { "type": "number" },
+        "sub_box_offset_y": { "type": "number" },
+        "sub_box_width": { "type": "number", "exclusiveMinimum": 0 },
+        "sub_box_height": { "type": "number", "exclusiveMinimum": 0 },
+        "preset_fill_rgba": { "$ref": "#/$defs/rgba" },
+        "preset_stroke_rgba": { "$ref": "#/$defs/rgba" },
+        "preset_text_rgba": { "$ref": "#/$defs/rgba" },
+        "avoid_overlap": { "type": "boolean" },
+        "arrows_outside": { "type": "boolean" },
+        "layout_padding": { "type": "number", "minimum": 0 },
+        "label_padding": { "type": "number", "minimum": 0 }
+        ,
+        "connector_side_preference": {
+          "type": "string",
+          "enum": ["auto", "left", "right", "top", "bottom"]
+        },
+        "connector_path_mode": {
+          "type": "string",
+          "enum": ["direct", "elbow_horizontal_first", "elbow_vertical_first", "elbow_auto"]
+        },
+        "connector_elbow_ratio": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "scene_timeline": {
+      "type": "object",
+      "properties": {
+        "specs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/animation_spec" },
+          "default": []
+        },
+        "lifecycle": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/lifecycle_event" },
+          "default": []
+        },
+        "segments": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/timeline_segment" },
+          "default": []
+        },
+        "groups": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/timeline_group" },
+          "default": []
+        }
+      },
+      "additionalProperties": false
+    },
+    "group_mode": {
+      "type": "string",
+      "enum": ["animation_group", "succession"]
+    },
+    "timeline_group": {
+      "type": "object",
+      "required": ["mode", "start", "run_time", "spec_indices"],
+      "properties": {
+        "mode": { "$ref": "#/$defs/group_mode" },
+        "start": { "type": "number", "minimum": 0 },
+        "run_time": { "type": "number", "exclusiveMinimum": 0 },
+        "lag_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "spec_indices": { "type": "array", "items": { "type": "integer", "minimum": 0 } }
+      },
+      "additionalProperties": false
+    },
+    "lifecycle_action": {
+      "type": "string",
+      "enum": ["add", "remove", "replace"]
+    },
+    "lifecycle_event": {
+      "type": "object",
+      "required": ["t", "action", "target"],
+      "properties": {
+        "t": { "type": "number", "minimum": 0 },
+        "action": { "$ref": "#/$defs/lifecycle_action" },
+        "target": { "type": "string", "minLength": 1 },
+        "with": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "timeline_segment": {
+      "type": "object",
+      "required": ["segment_type", "start"],
+      "properties": {
+        "segment_type": { "type": "string", "enum": ["play", "wait"] },
+        "start": { "type": "number", "minimum": 0 },
+        "run_time": { "type": "number", "exclusiveMinimum": 0 },
+        "duration": { "type": "number", "minimum": 0 },
+        "spec_indices": { "type": "array", "items": { "type": "integer", "minimum": 0 } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "segment_type": { "const": "play" } } },
+          "then": { "required": ["run_time", "spec_indices"] }
+        },
+        {
+          "if": { "properties": { "segment_type": { "const": "wait" } } },
+          "then": { "required": ["duration"] }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "float_keyframe": {
+      "type": "object",
+      "required": ["t", "value"],
+      "properties": {
+        "t": { "type": "number" },
+        "value": { "type": "number" },
+        "easing_to_next": { "$ref": "#/$defs/easing" }
+      },
+      "additionalProperties": false
+    },
+    "color_keyframe": {
+      "type": "object",
+      "required": ["t", "value"],
+      "properties": {
+        "t": { "type": "number" },
+        "value": { "$ref": "#/$defs/rgba" },
+        "easing_to_next": { "$ref": "#/$defs/easing" }
+      },
+      "additionalProperties": false
+    },
+    "track": {
+      "type": "object",
+      "required": ["track_type", "target", "property", "keyframes"],
+      "properties": {
+        "track_type": { "type": "string", "enum": ["float", "color"] },
+        "target": { "type": "string", "minLength": 1 },
+        "property": { "type": "string" },
+        "keyframes": { "type": "array", "minItems": 2 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "track_type": { "const": "float" } } },
+          "then": {
+            "properties": {
+              "property": {
+                "enum": [
+                  "x",
+                  "y",
+                  "scale_x",
+                  "scale_y",
+                  "rotation_deg",
+                  "opacity",
+                  "stroke_width",
+                  "width",
+                  "height",
+                  "radius",
+                  "radius_x",
+                  "radius_y",
+                  "font_size",
+                  "x1",
+                  "y1",
+                  "x2",
+                  "y2",
+                  "tip_length",
+                  "tip_width",
+                  "draw_progress"
+                ]
+              },
+              "keyframes": { "items": { "$ref": "#/$defs/float_keyframe" } }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "track_type": { "const": "color" } } },
+          "then": {
+            "properties": {
+              "property": { "enum": ["fill_rgba", "stroke_rgba"] },
+              "keyframes": { "items": { "$ref": "#/$defs/color_keyframe" } }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

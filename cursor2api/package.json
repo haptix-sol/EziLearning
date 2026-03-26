@@ -1,0 +1,16 @@
+{
+  "name": "ezilearning-cursor2api",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Cursor API proxy for EziLearning — application code lives in ./proxy",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "postinstall": "npm install --prefix ./proxy",
+    "dev": "npm run dev --prefix ./proxy",
+    "build": "npm run build --prefix ./proxy",
+    "start": "npm run start --prefix ./proxy",
+    "test:all": "npm run test:all --prefix ./proxy"
+  }
+}

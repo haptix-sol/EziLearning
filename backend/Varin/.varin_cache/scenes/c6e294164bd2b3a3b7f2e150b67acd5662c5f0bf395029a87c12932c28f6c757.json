@@ -1,0 +1,439 @@
+{
+  "version": "v1",
+  "canvas": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "background_rgba": [
+      8,
+      14,
+      30,
+      255
+    ]
+  },
+  "duration_seconds": 24.0,
+  "camera": {
+    "x": 0.0,
+    "y": 0.0,
+    "zoom": 1.0,
+    "rotation_deg": 0.0
+  },
+  "layers": [
+    {
+      "id": "title",
+      "z_index": 0,
+      "transform": {
+        "x": 640.0,
+        "y": 92.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          234,
+          242,
+          255,
+          255
+        ],
+        "stroke_rgba": [
+          220,
+          220,
+          240,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 0.0,
+        "draw_progress": 1.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "text",
+      "text": "Encapsulation",
+      "font_size": 52.0,
+      "font_family": null,
+      "font_path": null
+    },
+    {
+      "id": "unsafe",
+      "z_index": 0,
+      "transform": {
+        "x": 360.0,
+        "y": 330.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          188,
+          64,
+          64,
+          70
+        ],
+        "stroke_rgba": [
+          255,
+          156,
+          156,
+          255
+        ],
+        "stroke_width": 3.0,
+        "opacity": 1.0,
+        "draw_progress": 0.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "rect",
+      "width": 500.0,
+      "height": 300.0,
+      "corner_radius": 18.0
+    },
+    {
+      "id": "safe",
+      "z_index": 0,
+      "transform": {
+        "x": 920.0,
+        "y": 330.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          66,
+          168,
+          114,
+          74
+        ],
+        "stroke_rgba": [
+          144,
+          244,
+          198,
+          255
+        ],
+        "stroke_width": 3.0,
+        "opacity": 1.0,
+        "draw_progress": 0.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "rect",
+      "width": 500.0,
+      "height": 300.0,
+      "corner_radius": 18.0
+    },
+    {
+      "id": "ut",
+      "z_index": 0,
+      "transform": {
+        "x": 360.0,
+        "y": 330.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          255,
+          228,
+          228,
+          255
+        ],
+        "stroke_rgba": [
+          220,
+          220,
+          240,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 0.0,
+        "draw_progress": 1.0,
+        "line_height_mult": 1.14,
+        "text_max_width": 430.0
+      },
+      "type": "text",
+      "text": "balance = -999\n(no validation)",
+      "font_size": 27.0,
+      "font_family": null,
+      "font_path": null
+    },
+    {
+      "id": "st",
+      "z_index": 0,
+      "transform": {
+        "x": 920.0,
+        "y": 330.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          228,
+          246,
+          236,
+          255
+        ],
+        "stroke_rgba": [
+          220,
+          220,
+          240,
+          255
+        ],
+        "stroke_width": 2.0,
+        "opacity": 0.0,
+        "draw_progress": 1.0,
+        "line_height_mult": 1.14,
+        "text_max_width": 430.0
+      },
+      "type": "text",
+      "text": "withdraw(500)\ncheck -> update",
+      "font_size": 27.0,
+      "font_family": null,
+      "font_path": null
+    },
+    {
+      "id": "to_safe",
+      "z_index": 0,
+      "transform": {
+        "x": 640.0,
+        "y": 330.0,
+        "scale_x": 1.0,
+        "scale_y": 1.0,
+        "rotation_deg": 0.0
+      },
+      "style": {
+        "fill_rgba": [
+          65,
+          127,
+          224,
+          255
+        ],
+        "stroke_rgba": [
+          230,
+          238,
+          255,
+          255
+        ],
+        "stroke_width": 4.0,
+        "opacity": 1.0,
+        "draw_progress": 0.0,
+        "line_height_mult": 1.15,
+        "text_max_width": 0.0
+      },
+      "type": "arrow",
+      "x1": -120.0,
+      "y1": 0.0,
+      "x2": 120.0,
+      "y2": 0.0,
+      "tip_length": 18.0,
+      "tip_width": 12.0
+    }
+  ],
+  "animations": [],
+  "camera_animations": [],
+  "timeline": {
+    "specs": [
+      {
+        "target": "title",
+        "kind": "preset_text_typewriter",
+        "start": 0.0,
+        "run_time": 0.9,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "unsafe",
+        "kind": "draw_border_then_fill",
+        "start": 1.0,
+        "run_time": 0.8,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_in_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "ut",
+        "kind": "preset_text_typewriter",
+        "start": 1.7,
+        "run_time": 0.85,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "to_safe",
+        "kind": "create",
+        "start": 2.4,
+        "run_time": 0.7,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_in_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "safe",
+        "kind": "draw_border_then_fill",
+        "start": 2.8,
+        "run_time": 0.8,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_in_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "st",
+        "kind": "preset_text_typewriter",
+        "start": 3.35,
+        "run_time": 0.85,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "ease_out",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      },
+      {
+        "target": "safe",
+        "kind": "preset_emphasis_pulse",
+        "start": 5.0,
+        "run_time": 1.0,
+        "lag_ratio": 0.0,
+        "group_index": 0,
+        "group_size": 1,
+        "easing": "there_and_back",
+        "shift_x": 0.0,
+        "shift_y": 0.0,
+        "scale_from": 1.0,
+        "scale_to": 1.0,
+        "path_arc_deg": 0.0,
+        "path_points": null,
+        "homotopy_amp_x": 0.0,
+        "homotopy_amp_y": 0.0,
+        "homotopy_freq": 1.0,
+        "homotopy_phase_deg": 0.0,
+        "replace_with": null,
+        "to_x": null,
+        "to_y": null,
+        "to_scale_x": null,
+        "to_scale_y": null,
+        "to_rotation_deg": null
+      }
+    ],
+    "lifecycle": [],
+    "segments": [
+      {
+        "segment_type": "play",
+        "start": 0.0,
+        "run_time": 24.0,
+        "spec_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      }
+    ],
+    "groups": []
+  }
+}

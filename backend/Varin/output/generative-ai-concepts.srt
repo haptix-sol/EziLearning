@@ -1,0 +1,24 @@
+1
+00:00:00,000 --> 00:00:29,397
+Welcome. In the next few minutes we will unpack three ideas you will see everywhere in modern AI. First, generative AI: systems that produce new content. Second, the transformer: the architecture most large language models are built on. Third, agentic AI: software that plans steps and uses tools, not just one-shot answers. We will connect them in a simple story from data to helpful action.
+
+2
+00:00:29,397 --> 00:00:59,602
+Generative AI means the model creates something new from input, not only classifying or scoring. At a high level, it learns patterns from huge amounts of text, images, or other data, then samples new examples that look like the training distribution. A practical example is drafting an email from bullet points. Another is turning a sketch into image variations. The output is new each time, within the style the model learned.
+
+3
+00:00:59,602 --> 00:01:31,012
+The transformer architecture is the engine behind most generative language models today. Text is split into tokens. Each layer mixes information across the sequence using attention, so every position can focus on the words that matter. Feed-forward layers refine features. Stacks of these blocks produce logits, which turn into probabilities for the next token. That next-token loop is what makes long answers possible, one piece at a time.
+
+4
+00:01:31,012 --> 00:02:03,326
+Agentic AI adds a control loop around a generative model. The system reads a goal, breaks it into steps, calls tools like search or code execution, observes results, and continues until the task is done or it needs the user. Compare that to a single chat reply with no follow-up actions. Examples include research assistants that cite sources, or coding agents that run tests and fix errors. The generative model proposes; the agent loop commits and verifies.
+
+5
+00:02:03,326 --> 00:02:32,815
+Here is how the pieces fit. Training data and your prompt feed a transformer-based generative model. The model outputs text or structured plans. An agentic layer can take that output, run tools, and feed observations back into the model for another round. So transformers are often the brain, generative training is how that brain learns to produce language, and agents are the hands and eyes that use the brain in the real world.
+
+6
+00:02:32,815 --> 00:02:57,120
+To recap. Generative AI creates new content by learning patterns and sampling. Transformers implement scalable attention for sequence modeling and power most modern LLMs. Agentic systems wrap those models in planning and tool use. Together they describe much of what you see in assistants today. Thanks for watching.
+

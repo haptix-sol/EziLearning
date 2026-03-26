@@ -1,0 +1,72 @@
+# EziLearning Cursor proxy — example configuration (copy to config.yaml)
+
+port: 3010
+
+# Request timeout (seconds)
+timeout: 120
+
+# --- API auth (recommended on public networks) ---
+# When set, POST requests must send Bearer token or x-api-key.
+# Env: AUTH_TOKEN=token1,token2
+# auth_tokens:
+#   - "sk-your-secret-token-1"
+
+# --- HTTP proxy (optional) ---
+# Node fetch does not use HTTP_PROXY/HTTPS_PROXY; set here or PROXY env.
+# Example: proxy: "http://127.0.0.1:7890"
+
+# Cursor agentic model. Kimi K2.5 (Moonshot) — cost-effective, 256K context. Override if needed.
+cursor_model: "kimi-k2.5"
+
+# --- Auto-continue when output is truncated ---
+# 0 = disabled (client handles continuation). 1–3 = proxy may continue (higher latency).
+# Env: MAX_AUTO_CONTINUE
+max_auto_continue: 0
+
+# --- Max messages in history ---
+# Drop oldest beyond this (few-shot preserved). -1 = unlimited.
+# Env: MAX_HISTORY_MESSAGES
+max_history_messages: -1
+
+# --- Thinking blocks ---
+# Overrides client: true / false / omit to follow client.
+# Env: THINKING_ENABLED
+thinking:
+  enabled: false
+
+# --- History compression ---
+compression:
+  enabled: false
+  level: 1
+  # keep_recent: 10
+  # early_msg_max_chars: 4000
+
+tools:
+  schema_mode: 'full'
+  description_max_length: 0
+  # include_only: [ "Read", "Write" ]
+  # exclude: [ "some_tool" ]
+
+# --- Response sanitization (optional) ---
+# Rewrites Cursor-branded refusals toward a neutral assistant voice.
+# sanitize_response: true
+
+# --- Extra refusal regexes (optional, appended to built-ins) ---
+# refusal_patterns:
+#   - "I cannot help with that"
+
+fingerprint:
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+
+vision:
+  enabled: true
+  mode: 'ocr'
+  # base_url: "https://openrouter.ai/api/v1/chat/completions"
+  # api_key: "sk-or-v1-..."
+  # model: "meta-llama/llama-3.2-11b-vision-instruct:free"
+  # proxy: "http://127.0.0.1:7890"
+
+logging:
+  file_enabled: false
+  dir: "./logs"
+  max_days: 7
