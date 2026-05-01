@@ -1,4 +1,4 @@
-"""Generate study plans and notes via Cursor LLM. No static templates - all content from API."""
+"""Generate study plans and notes via configured LLM provider. No static templates - all content from API."""
 from sqlalchemy.orm import Session
 
 from models import StudyPlan, DayPlan, UserProfile
@@ -10,8 +10,8 @@ _PROXY_ERROR_PAYLOADS = frozenset({"model_refused", "tool_capabilities_unavailab
 
 def _study_plan_failure_message(detail: str | None) -> str:
     setup = (
-        " For setup: set OPENAI_API_KEY, or run the Cursor proxy and set CURSOR_API_URL (e.g. http://localhost:3010/v1). "
-        "api.cursor.com has no OpenAI-compatible chat API."
+        " For setup: set BEDROCK_MODEL_ID + AWS_REGION (and AWS credentials), or OPENAI_API_KEY, "
+        "or OPENAI_COMPATIBLE_BASE_URL for a compatible chat API."
     )
     if detail:
         return f"Could not generate study plan. {detail.strip()}{setup}"
@@ -47,9 +47,9 @@ def generate_plan_with_llm(
     profile: UserProfile | None = None,
 ) -> list[dict] | None:
     """Use LLM to generate a personalized study plan. Returns list of day dicts or None."""
-    if not llm_service.client:
+    if not llm_service.is_configured():
         llm_service.last_failure_reason = (
-            "No LLM client: set OPENAI_API_KEY, or CURSOR_API_URL with the proxy running."
+            "No LLM provider: set BEDROCK_MODEL_ID + AWS_REGION, or OPENAI_API_KEY, or OPENAI_COMPATIBLE_BASE_URL."
         )
         return None
     profile_ctx = _profile_context(profile)
@@ -73,8 +73,8 @@ Recommended daily time: 60-120 mins. Include mix of read, study, practice, test.
         err = result.get("error")
         msg = (result.get("message") or "").strip()
         raise ValueError(
-            "Study plan generation failed: the model or Cursor proxy returned an error instead of a plan "
-            f"({err!r}). {msg} Retry, check proxy logs, increase LLM_TIMEOUT, or use OPENAI_API_KEY."
+            "Study plan generation failed: the model returned an error instead of a plan "
+            f"({err!r}). {msg} Retry, check logs, or increase LLM_TIMEOUT."
         )
     if result and "days" in result:
         return result["days"]
@@ -124,20 +124,27 @@ def create_study_plan(user_id: str, duration_days: int, focus_area: str | None, 
     return plan
 
 
-def generate_notes_for_topic(topic: str, day_title: str) -> str:
+def generate_notes_for_topic(
+    topic: str,
+    day_title: str,
+    subtopics: list[str] | None = None,
+) -> str:
     """Generate study notes for a topic via LLM."""
-    if not llm_service.client:
-        return f"## {topic}\n\nStudy this topic. Focus on key concepts, examples, and common interview questions."
-    try:
-        response = llm_service.client.chat.completions.create(
-            model=llm_service.model,
-            messages=[
-                {"role": "system", "content": "You are a technical interview prep coach. Create concise study notes in markdown."},
-                {"role": "user", "content": f"Create study notes for: {topic}. Part of: {day_title}. Include: key concepts, 2-3 examples, 2-3 common interview questions."},
-            ],
-            temperature=0.3,
-            timeout=30,
-        )
-        return response.choices[0].message.content or f"## {topic}\n\nStudy this topic."
-    except Exception:
+    fallback = (
+        f"## {topic}\n\nStudy this topic. Focus on key concepts, examples, and common interview questions."
+    )
+    if not llm_service.is_configured():
+        return fallback
+    sub_line = ""
+    if subtopics:
+        sub_line = " The learner's plan lists these subtopics for this topic (cover each explicitly in its own short subsection): " + "; ".join(subtopics) + "."
+    out = llm_service._call(
+        "You are a technical interview prep coach. Create concise study notes in markdown.",
+        f"Create study notes for: {topic}. Part of day: {day_title}.{sub_line} "
+        "Include: key concepts, 2-3 examples, 2-3 common interview questions.",
+        response_format="text",
+        temperature=0.3,
+    )
+    if not out or not isinstance(out.get("text"), str) or not out["text"].strip():
         return f"## {topic}\n\nStudy this topic. Focus on key concepts and examples."
+    return out["text"].strip()

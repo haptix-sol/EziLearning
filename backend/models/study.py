@@ -2,7 +2,7 @@
 from datetime import datetime
 from uuid import uuid4
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy import JSON
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -57,6 +57,24 @@ class DayPlanCompletion(Base):
     day_plan_id: Mapped[str] = mapped_column(String(36), ForeignKey("day_plans.id", ondelete="CASCADE"), nullable=False)
     completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
     xp_earned: Mapped[int] = mapped_column(Integer, default=10)
+
+
+class VisualLessonTopicProgress(Base):
+    """Per-user progress for Daily Lesson Visual Explainer (per day + topic slug)."""
+
+    __tablename__ = "visual_lesson_topic_progress"
+    __table_args__ = (UniqueConstraint("user_id", "day_plan_id", "topic_key", name="uq_visual_lesson_topic"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    user_id: Mapped[str] = mapped_column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    day_plan_id: Mapped[str] = mapped_column(String(36), ForeignKey("day_plans.id", ondelete="CASCADE"), nullable=False)
+    topic_key: Mapped[str] = mapped_column(String(512), nullable=False)
+    last_slide_index: Mapped[int] = mapped_column(Integer, default=0)
+    completed: Mapped[bool] = mapped_column(Boolean, default=False)
+    viewed_slide_ids: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    #: LLM-built manifest for this day+topic; when set, GET visual-lesson returns this instead of catalog.
+    generated_manifest: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, onupdate=utc_now)
 
 
 class UserLevel(Base):

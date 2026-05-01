@@ -1,4 +1,4 @@
-import { readFileSync, existsSync, watch, type FSWatcher } from 'fs';
+﻿import { readFileSync, existsSync, watch, type FSWatcher } from 'fs';
 import { parse as parseYaml } from 'yaml';
 import type { AppConfig } from './types.js';
 
@@ -50,13 +50,13 @@ function parseYamlConfig(defaults: AppConfig): { config: AppConfig; raw: Record<
                 proxy: yaml.vision.proxy || undefined,
             };
         }
-        // ★ API  token
+        // â˜… API  token
         if (yaml.auth_tokens) {
             result.authTokens = Array.isArray(yaml.auth_tokens)
                 ? yaml.auth_tokens.map(String)
                 : String(yaml.auth_tokens).split(',').map((s: string) => s.trim()).filter(Boolean);
         }
-        // ★ 
+        // â˜… 
         if (yaml.compression !== undefined) {
             const c = yaml.compression;
             result.compression = {
@@ -66,13 +66,13 @@ function parseYamlConfig(defaults: AppConfig): { config: AppConfig; raw: Record<
                 earlyMsgMaxChars: typeof c.early_msg_max_chars === 'number' ? c.early_msg_max_chars : 4000,
             };
         }
-        // ★ Thinking 
+        // â˜… Thinking 
         if (yaml.thinking !== undefined) {
             result.thinking = {
                 enabled: yaml.thinking.enabled !== false, // 
             };
         }
-        // ★ 
+        // â˜… 
         if (yaml.logging !== undefined) {
             result.logging = {
                 file_enabled: yaml.logging.file_enabled === true, // 
@@ -80,7 +80,7 @@ function parseYamlConfig(defaults: AppConfig): { config: AppConfig; raw: Record<
                 max_days: typeof yaml.logging.max_days === 'number' ? yaml.logging.max_days : 7,
             };
         }
-        // ★ 
+        // â˜… 
         if (yaml.tools !== undefined) {
             const t = yaml.tools;
             const validModes = ['compact', 'full', 'names_only'];
@@ -91,11 +91,11 @@ function parseYamlConfig(defaults: AppConfig): { config: AppConfig; raw: Record<
                 exclude: Array.isArray(t.exclude) ? t.exclude.map(String) : undefined,
             };
         }
-        // ★ 
+        // â˜… 
         if (yaml.sanitize_response !== undefined) {
             result.sanitizeEnabled = yaml.sanitize_response === true;
         }
-        // ★ 
+        // â˜… 
         if (Array.isArray(yaml.refusal_patterns)) {
             result.refusalPatterns = yaml.refusal_patterns.map(String).filter(Boolean);
         }
@@ -183,20 +183,20 @@ function defaultConfig(): AppConfig {
 function detectChanges(oldCfg: AppConfig, newCfg: AppConfig): string[] {
     const changes: string[] = [];
 
-    if (oldCfg.port !== newCfg.port) changes.push(`port: ${oldCfg.port} → ${newCfg.port}`);
-    if (oldCfg.timeout !== newCfg.timeout) changes.push(`timeout: ${oldCfg.timeout} → ${newCfg.timeout}`);
-    if (oldCfg.proxy !== newCfg.proxy) changes.push(`proxy: ${oldCfg.proxy || '(none)'} → ${newCfg.proxy || '(none)'}`);
-    if (oldCfg.cursorModel !== newCfg.cursorModel) changes.push(`cursor_model: ${oldCfg.cursorModel} → ${newCfg.cursorModel}`);
-    if (oldCfg.maxAutoContinue !== newCfg.maxAutoContinue) changes.push(`max_auto_continue: ${oldCfg.maxAutoContinue} → ${newCfg.maxAutoContinue}`);
-    if (oldCfg.maxHistoryMessages !== newCfg.maxHistoryMessages) changes.push(`max_history_messages: ${oldCfg.maxHistoryMessages} → ${newCfg.maxHistoryMessages}`);
+    if (oldCfg.port !== newCfg.port) changes.push(`port: ${oldCfg.port} â†’ ${newCfg.port}`);
+    if (oldCfg.timeout !== newCfg.timeout) changes.push(`timeout: ${oldCfg.timeout} â†’ ${newCfg.timeout}`);
+    if (oldCfg.proxy !== newCfg.proxy) changes.push(`proxy: ${oldCfg.proxy || '(none)'} â†’ ${newCfg.proxy || '(none)'}`);
+    if (oldCfg.cursorModel !== newCfg.cursorModel) changes.push(`cursor_model: ${oldCfg.cursorModel} â†’ ${newCfg.cursorModel}`);
+    if (oldCfg.maxAutoContinue !== newCfg.maxAutoContinue) changes.push(`max_auto_continue: ${oldCfg.maxAutoContinue} â†’ ${newCfg.maxAutoContinue}`);
+    if (oldCfg.maxHistoryMessages !== newCfg.maxHistoryMessages) changes.push(`max_history_messages: ${oldCfg.maxHistoryMessages} â†’ ${newCfg.maxHistoryMessages}`);
 
     // auth_tokens
     const oldTokens = (oldCfg.authTokens || []).join(',');
     const newTokens = (newCfg.authTokens || []).join(',');
-    if (oldTokens !== newTokens) changes.push(`auth_tokens: ${oldCfg.authTokens?.length || 0} → ${newCfg.authTokens?.length || 0} token(s)`);
+    if (oldTokens !== newTokens) changes.push(`auth_tokens: ${oldCfg.authTokens?.length || 0} â†’ ${newCfg.authTokens?.length || 0} token(s)`);
 
     // thinking
-    if (JSON.stringify(oldCfg.thinking) !== JSON.stringify(newCfg.thinking)) changes.push(`thinking: ${JSON.stringify(oldCfg.thinking)} → ${JSON.stringify(newCfg.thinking)}`);
+    if (JSON.stringify(oldCfg.thinking) !== JSON.stringify(newCfg.thinking)) changes.push(`thinking: ${JSON.stringify(oldCfg.thinking)} â†’ ${JSON.stringify(newCfg.thinking)}`);
 
     // vision
     if (JSON.stringify(oldCfg.vision) !== JSON.stringify(newCfg.vision)) changes.push('vision: (changed)');
@@ -212,9 +212,9 @@ function detectChanges(oldCfg: AppConfig, newCfg: AppConfig): string[] {
 
     // refusalPatterns
     // sanitize_response
-    if (oldCfg.sanitizeEnabled !== newCfg.sanitizeEnabled) changes.push(`sanitize_response: ${oldCfg.sanitizeEnabled} → ${newCfg.sanitizeEnabled}`);
+    if (oldCfg.sanitizeEnabled !== newCfg.sanitizeEnabled) changes.push(`sanitize_response: ${oldCfg.sanitizeEnabled} â†’ ${newCfg.sanitizeEnabled}`);
 
-    if (JSON.stringify(oldCfg.refusalPatterns) !== JSON.stringify(newCfg.refusalPatterns)) changes.push(`refusal_patterns: ${oldCfg.refusalPatterns?.length || 0} → ${newCfg.refusalPatterns?.length || 0} rule(s)`);
+    if (JSON.stringify(oldCfg.refusalPatterns) !== JSON.stringify(newCfg.refusalPatterns)) changes.push(`refusal_patterns: ${oldCfg.refusalPatterns?.length || 0} â†’ ${newCfg.refusalPatterns?.length || 0} rule(s)`);
 
     // fingerprint
     if (oldCfg.fingerprint.userAgent !== newCfg.fingerprint.userAgent) changes.push('fingerprint: (changed)');
@@ -239,85 +239,54 @@ export function getConfig(): AppConfig {
 /**
  *  config.yaml 
  *
- * 。
- * 。
+ * ã€‚
+ * ã€‚
  */
 export function initConfigWatcher(): void {
-    if (watcher) return; // 
+    if (watcher) return;
     if (!existsSync('config.yaml')) {
-        console.log('[Config] config.yaml ，');
+        console.log('[Config] config.yaml not found; hot-reload disabled (defaults only)');
         return;
     }
-
     const DEBOUNCE_MS = 500;
-
     watcher = watch('config.yaml', (eventType) => {
         if (eventType !== 'change') return;
-
-        // 
         if (debounceTimer) clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
             try {
                 if (!existsSync('config.yaml')) {
-                    console.warn('[Config] ⚠️  config.yaml ，');
+                    console.warn('[Config] config.yaml was removed; keeping last loaded config');
                     return;
                 }
-
                 const oldConfig = config;
                 const oldPort = oldConfig.port;
-
-                //  YAML + 
                 const defaults = defaultConfig();
                 const { config: newConfig } = parseYamlConfig(defaults);
                 applyEnvOverrides(newConfig);
-
-                // 
                 const changes = detectChanges(oldConfig, newConfig);
-                if (changes.length === 0) return; // 
-
-                // ★ 
+                if (changes.length === 0) return;
                 if (newConfig.port !== oldPort) {
-                    console.warn(`[Config] ⚠️   port  (${oldPort} → ${newConfig.port})，`);
-                    newConfig.port = oldPort; // 
+                    console.warn(`[Config] port change ignored (${oldPort} -> ${newConfig.port}); restart server to change port`);
+                    newConfig.port = oldPort;
                 }
-
-                //  getConfig() 
                 config = newConfig;
-
-                console.log(`[Config] 🔄 config.yaml ，${changes.length} :`);
-                changes.forEach(c => console.log(`  └─ ${c}`));
-
-                // 
+                console.log(`[Config] config.yaml reloaded (${changes.length} change(s)):`);
+                changes.forEach(c => console.log(`  - ${c}`));
                 for (const cb of reloadCallbacks) {
-                    try {
-                        cb(newConfig, changes);
-                    } catch (e) {
-                        console.warn('[Config] :', e);
-                    }
+                    try { cb(newConfig, changes); } catch (e) { console.warn('[Config] reload callback error:', e); }
                 }
-            } catch (e) {
-                console.error('[Config] ❌ ，:', e);
-            }
+            } catch (e) { console.error('[Config] config reload failed:', e); }
         }, DEBOUNCE_MS);
     });
-
-    // watcher 
     watcher.on('error', (err) => {
-        console.error('[Config] ❌ :', err);
+        console.error('[Config] watcher error:', err);
         watcher = null;
-        // 2 
-        setTimeout(() => {
-            console.log('[Config] 🔄  config.yaml ...');
-            initConfigWatcher();
-        }, 2000);
+        setTimeout(() => { console.log('[Config] Retrying config.yaml watcher...'); initConfigWatcher(); }, 2000);
     });
-
-    console.log('[Config] 👁️   config.yaml （）');
+    console.log('[Config] Watching config.yaml for changes');
 }
 
-/**
- * 
- */
+
 export function stopConfigWatcher(): void {
     if (debounceTimer) {
         clearTimeout(debounceTimer);
@@ -328,3 +297,4 @@ export function stopConfigWatcher(): void {
         watcher = null;
     }
 }
+

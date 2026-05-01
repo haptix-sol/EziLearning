@@ -3,11 +3,12 @@ import shutil
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from api.dependencies import CurrentUser, SessionDep, get_db
 from core.config import settings
-from core.exceptions import ValidationError
+from core.exceptions import NotFoundError, ValidationError
 from models import Resume, User, UserProfile
 from schemas.resume import ProfileUpdateRequest, ResumeResponse, ResumeSkillResponse, UserProfileResponse
 from services.resume_parser import process_resume
@@ -91,6 +92,22 @@ def get_my_resume(current_user: CurrentUser, db: Session = Depends(get_db)) -> R
             created_at=profile.created_at,
         ) if profile else None,
     )
+
+
+@router.get("/me/download")
+def download_my_resume(current_user: CurrentUser, db: Session = Depends(get_db)):
+    """Download current user's latest uploaded resume file."""
+    resume = db.query(Resume).filter(Resume.user_id == current_user.id).order_by(Resume.created_at.desc()).first()
+    if not resume:
+        raise NotFoundError("No resume found for this user")
+
+    resume_path = Path(resume.file_path)
+    if not resume_path.exists():
+        raise NotFoundError("Stored resume file is not available")
+
+    download_name = resume.file_name or f"resume-{current_user.id}.pdf"
+    media_type = resume.file_type or "application/octet-stream"
+    return FileResponse(path=resume_path, media_type=media_type, filename=download_name)
 
 
 @router.get("/me-display")

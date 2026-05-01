@@ -21,11 +21,6 @@ from core.config import settings
 BACKEND_ROOT = Path(__file__).resolve().parent.parent
 # Repository root (parent of backend/)
 REPO_ROOT = BACKEND_ROOT.parent
-VIDEO_GENERATOR_ROOT = (
-    Path(os.environ.get("VARIN_VIDEO_GENERATOR_ROOT", "")).resolve()
-    if os.environ.get("VARIN_VIDEO_GENERATOR_ROOT")
-    else None
-)
 
 
 def _ffmpeg_candidates_under(root: Path) -> list[Path]:
@@ -126,8 +121,6 @@ def get_ffmpeg_executable() -> str:
         return resolved
 
     candidates: list[Path] = []
-    if VIDEO_GENERATOR_ROOT:
-        candidates.extend(_ffmpeg_candidates_under(VIDEO_GENERATOR_ROOT))
     candidates.extend(_ffmpeg_candidates_under(REPO_ROOT))
     candidates.extend(_ffmpeg_candidates_under(BACKEND_ROOT))
     candidates.extend(_winget_ffmpeg_candidates())
@@ -150,8 +143,6 @@ def get_ffprobe_executable() -> str:
         return resolved
 
     candidates: list[Path] = []
-    if VIDEO_GENERATOR_ROOT:
-        candidates.extend(_ffprobe_candidates_under(VIDEO_GENERATOR_ROOT))
     candidates.extend(_ffprobe_candidates_under(REPO_ROOT))
     candidates.extend(_ffprobe_candidates_under(BACKEND_ROOT))
     candidates.extend(_winget_ffprobe_candidates())

@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field, field_validator
 
 from api.dependencies import CurrentUser, get_db
-from core.exceptions import NotFoundError, ValidationError
+from core.exceptions import NotFoundError
 from models import UserGoal, UserKnownTopic, TrendingRole, UserProfile, StudyPlan, DayPlan, DayPlanCompletion
 from services.study_generator import create_study_plan
 
@@ -35,9 +35,25 @@ class SetGoalRequest(BaseModel):
     @field_validator("goal_type", mode="before")
     @classmethod
     def coerce_goal_type(cls, v):
-        if v is None or (isinstance(v, str) and not v.strip()):
+        if v is None:
             raise ValueError("goal_type is required")
-        return str(v).strip().lower() if isinstance(v, str) else v
+        s = str(v).strip().lower()
+        if not s:
+            raise ValueError("goal_type is required")
+        return s
+
+
+class SetGoalResponse(BaseModel):
+    message: str
+    goal_id: str
+    study_plan_id: str | None = Field(
+        default=None,
+        description="Set when a day-by-day plan was generated successfully.",
+    )
+    study_plan_error: str | None = Field(
+        default=None,
+        description="When plan generation failed; goal is still saved with chosen duration_days.",
+    )
 
 
 @router.get("/status")
@@ -56,7 +72,7 @@ def get_onboarding_status(current_user: CurrentUser, db: Session = Depends(get_d
     }
 
 
-@router.post("/goal")
+@router.post("/goal", response_model=SetGoalResponse)
 def set_goal(
     current_user: CurrentUser,
     data: SetGoalRequest,
@@ -65,13 +81,17 @@ def set_goal(
     """Set user's learning goal. If duration_days (7, 14, 30) provided for manual/trending, creates study plan."""
     study_plan_id = None
     duration_days = None
+    study_plan_error: str | None = None
     if data.duration_days and data.duration_days in (7, 14, 30) and data.goal_type in ("manual", "trending"):
         try:
             plan = create_study_plan(current_user.id, data.duration_days, data.goal_text, db)
             study_plan_id = plan.id
             duration_days = data.duration_days
         except ValueError as e:
-            raise ValidationError(str(e))
+            # Do not use HTTP 422 here — that status is for invalid request bodies. LLM/upstream failures are distinct.
+            db.rollback()
+            study_plan_error = (str(e) or "Study plan generation failed.")[:4000]
+            duration_days = data.duration_days
     goal = UserGoal(
         user_id=current_user.id,
         goal_type=data.goal_type,
@@ -83,7 +103,16 @@ def set_goal(
     )
     db.add(goal)
     db.commit()
-    return {"message": "Goal set", "goal_id": goal.id, "study_plan_id": study_plan_id}
+    db.refresh(goal)
+    msg = "Goal set"
+    if study_plan_error:
+        msg = "Goal set (study plan could not be generated — fix LLM config or try again later)"
+    return SetGoalResponse(
+        message=msg,
+        goal_id=goal.id,
+        study_plan_id=study_plan_id,
+        study_plan_error=study_plan_error,
+    )
 
 
 @router.get("/goals")

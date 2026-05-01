@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from api.dependencies import CurrentUser, SessionDep, get_db
 from models import Execution, UserQuestionAnswer
 from schemas.progress import ProgressResponse
+from services.level_service import count_distinct_challenges_passed
 
 router = APIRouter(prefix="/progress", tags=["progress"])
 
@@ -13,11 +14,8 @@ router = APIRouter(prefix="/progress", tags=["progress"])
 @router.get("", response_model=ProgressResponse)
 def get_progress(current_user: CurrentUser, db: Session = Depends(get_db)) -> ProgressResponse:
     """Get user progress summary."""
-    challenges_completed = db.query(Execution).filter(
-        Execution.user_id == current_user.id,
-        Execution.status == "completed",
-        Execution.challenge_id.isnot(None),
-    ).count()
+    # Only full solves count: Submit with test_results and every case passed (distinct challenges).
+    challenges_completed = count_distinct_challenges_passed(current_user.id, db)
     questions_answered = db.query(UserQuestionAnswer).filter(
         UserQuestionAnswer.user_id == current_user.id,
     ).count()

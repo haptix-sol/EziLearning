@@ -1,125 +1,41 @@
-"""LLM client: OpenAI or Cursor API for skill extraction, questions, video scripts, etc."""
+"""High-level LLM helpers. All traffic goes through :func:`services.ai.factory.get_llm_provider`."""
+from __future__ import annotations
+
 import json
 import logging
-import re
 from typing import Any
 
 from core.config import settings
+from services.ai.factory import get_llm_provider
+from services.ai.types import LLMRequest
 
 logger = logging.getLogger(__name__)
 
 
-def _parse_json_response(content: str) -> dict[str, Any]:
-    """
-    Parse model output as JSON. Handles markdown fences and leading/trailing prose.
-    Cursor proxy / some models ignore json_object or return empty whitespace.
-    """
-    text = (content or "").strip()
-    if not text:
-        raise ValueError("empty model content")
-    try:
-        return json.loads(text)
-    except json.JSONDecodeError:
-        pass
-    m = re.search(r"```(?:json)?\s*([\s\S]*?)```", text, re.IGNORECASE)
-    if m:
-        inner = m.group(1).strip()
-        if inner:
-            try:
-                return json.loads(inner)
-            except json.JSONDecodeError:
-                pass
-    # First top-level JSON object (balanced braces)
-    start = text.find("{")
-    if start != -1:
-        try:
-            obj, _end = json.JSONDecoder().raw_decode(text[start:])
-            if isinstance(obj, dict):
-                return obj
-        except json.JSONDecodeError:
-            pass
-    raise ValueError(f"not valid JSON (len={len(text)}, preview={text[:200]!r})")
-
-
-def _get_client():
-    """Return OpenAI-compatible client. Prefer OpenAI, then cursor2api/Cursor proxy."""
-    try:
-        from openai import OpenAI
-        # OpenAI API - works out of the box
-        if settings.openai_api_key:
-            return (
-                OpenAI(api_key=settings.openai_api_key),
-                settings.openai_api_model,
-                0.7,
-                4096,
-            )
-        # cursor2api or Cursor proxy - CURSOR_API_URL points to proxy (e.g. http://localhost:3010/v1)
-        if settings.cursor_api_url:
-            base_url = settings.cursor_api_url.rstrip("/")
-            if not base_url.endswith("/v1"):
-                base_url = base_url + "/v1"
-            api_key = settings.cursor_api_key or "cursor2api"  # placeholder when proxy has no auth
-            return (
-                OpenAI(api_key=api_key, base_url=base_url),
-                settings.cursor_api_model,
-                settings.cursor_api_model_temperature,
-                settings.cursor_api_model_max_tokens,
-            )
-        # Legacy: CURSOR_API_KEY without URL (api.cursor.com - no chat API, will likely fail)
-        if settings.cursor_api_key:
-            base_url = "https://api.cursor.com/v1"
-            return (
-                OpenAI(api_key=settings.cursor_api_key, base_url=base_url),
-                settings.cursor_api_model,
-                settings.cursor_api_model_temperature,
-                settings.cursor_api_model_max_tokens,
-            )
-    except Exception as e:
-        logger.warning("LLM client init failed: %s", e)
-    return None
-
-
 class LLMService:
-    """LLM client using Cursor API (OpenAI-compatible)."""
+    """Resume parsing, study plans, questions, challenges — backed by Bedrock / OpenAI / compatible HTTP."""
 
     def __init__(self) -> None:
-        self._client = None
-        self._model = None
-        self._temperature = 0.2
-        self._max_tokens = 4096
-        #: Set when the last `_call` returned None (for clearer API error messages).
+        self._max_tokens: int = int(settings.cursor_api_model_max_tokens or 4096)
+        #: Set when the last ``_call`` returned None (for clearer API error messages).
         self.last_failure_reason: str | None = None
 
-    def _ensure_client(self):
-        if self._client is not None:
-            return self._client is not None
-        result = _get_client()
-        if result is None:
-            return False
-        self._client, self._model, self._temperature, self._max_tokens = result
-        return True
+    def is_configured(self) -> bool:
+        return get_llm_provider() is not None
 
     @property
     def client(self):
-        """Raw client for direct chat.completions calls."""
-        if not self._ensure_client():
-            return None
-        return self._client
+        """Deprecated: was raw OpenAI SDK client. Use ``is_configured()`` and ``_call``."""
+        return None
 
     @property
     def model(self) -> str:
-        if not self._ensure_client():
-            return settings.cursor_api_model
-        return self._model
-
-    @property
-    def video_model(self) -> str:
-        """Faster model for video generation when configured. Reduces LLM latency."""
-        if settings.openai_api_key and settings.openai_api_model_video:
-            return settings.openai_api_model_video
-        if (settings.cursor_api_url or settings.cursor_api_key) and settings.cursor_api_model_video:
-            return settings.cursor_api_model_video
-        return self.model
+        """Best-effort model label for logs (Bedrock or OpenAI)."""
+        if (settings.bedrock_model_id or "").strip():
+            return (settings.bedrock_model_id or "").strip()
+        if settings.openai_api_key:
+            return settings.openai_api_model
+        return settings.cursor_api_model
 
     def _call(
         self,
@@ -129,55 +45,38 @@ class LLMService:
         temperature: float | None = None,
         model: str | None = None,
     ) -> dict | None:
-        """Make an LLM call. Returns parsed JSON or None on failure. Use model= for override (e.g. video_model)."""
+        """Make an LLM call. Returns parsed dict for ``json_object``, or ``{\"text\": ...}`` for plain text."""
         self.last_failure_reason = None
-        if not self._ensure_client():
+        prov = get_llm_provider()
+        if not prov:
             self.last_failure_reason = (
-                "No LLM client: set OPENAI_API_KEY in .env, or CURSOR_API_URL (e.g. http://localhost:3010/v1) "
-                "for the local Cursor proxy."
+                "No LLM provider: set BEDROCK_MODEL_ID + AWS_REGION (and AWS credentials), "
+                "or OPENAI_API_KEY, or OPENAI_COMPATIBLE_BASE_URL + key for a compatible API."
             )
-            logger.warning("No LLM API key configured (OPENAI_API_KEY or CURSOR_API_KEY)")
+            logger.warning(self.last_failure_reason)
             return None
-        temp = temperature if temperature is not None else self._temperature
-        use_model = model or self.model
-        try:
-            kwargs = {
-                "model": use_model,
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_content},
-                ],
-                "temperature": temp,
-                "max_tokens": self._max_tokens,
-                "timeout": settings.llm_timeout,
-            }
-            if response_format:
-                kwargs["response_format"] = {"type": response_format}
 
-            response = self._client.chat.completions.create(**kwargs)
-            raw = response.choices[0].message.content
-            content = (raw or "").strip()
-            if not content:
-                self.last_failure_reason = (
-                    f"Empty response from model {use_model!r} (check proxy logs, timeouts, or json_object support)."
-                )
-                logger.warning(
-                    "LLM returned empty message content (model=%s). Check proxy/Cursor and json_object support.",
-                    use_model,
-                )
-                return None
-            if response_format == "json_object":
-                try:
-                    return _parse_json_response(content)
-                except ValueError as e:
-                    self.last_failure_reason = f"Model output was not valid JSON: {e}"
-                    logger.warning("LLM JSON parse failed: %s", e)
-                    return None
-            return {"text": content}
-        except Exception as e:
-            self.last_failure_reason = f"LLM request failed: {e}"
-            logger.exception("LLM call failed: %s", e)
+        fmt: Any = "json_object" if response_format == "json_object" else "text"
+        temp = 0.7 if temperature is None else temperature
+        meta: dict[str, Any] = {}
+        if model:
+            meta["model"] = model
+
+        req = LLMRequest(
+            system_prompt=system_prompt,
+            user_content=user_content,
+            temperature=temp,
+            max_tokens=self._max_tokens,
+            response_format=fmt,
+            metadata=meta,
+        )
+        resp = prov.complete(req)
+        if resp.error:
+            self.last_failure_reason = resp.error
             return None
+        if fmt == "json_object":
+            return resp.parsed_json
+        return {"text": resp.raw_text}
 
     def extract_skills(self, resume_text: str) -> list[dict[str, Any]]:
         """Extract skills from resume text."""
@@ -254,18 +153,99 @@ Make questions practical and interview-relevant."""
         language: str = "python",
     ) -> dict[str, Any] | None:
         """Generate a coding challenge with test cases."""
-        system = f"""You are a coding challenge creator. Create a {difficulty} {language} coding challenge testing {skill}.
+        from core.challenge_topics import TOPIC_SLUGS
+
+        topics_hint = ", ".join(TOPIC_SLUGS)
+        system = f"""You are a coding challenge creator. Create a {difficulty} coding challenge.
+
+MANDATORY LANGUAGE (non-negotiable):
+- The solution language is exactly: {language}
+- JSON field "language" MUST be the string: "{language}" (same spelling).
+- Title and description MUST be written for {language} only (no "implement in Python" if language is java, etc.).
+- starter_code and solution_code MUST be valid {language} source code for this problem.
+
+Skill context (topic area, may be a language name or a domain like Algorithms): {skill}
+
+Allowed "language" values only: python, javascript, java, cpp, c.
+
+Include a "topics" field: an array of 1–4 topic slugs chosen from this list only: {topics_hint}
+Examples: Two-sum style → ["arrays","hash-table"]; linked list cycle → ["linked-list","two-pointers"]; Java streams API → ["streams","strings"].
+
 Return a JSON object with:
 - "title": string
 - "description": string (problem statement, input/output format)
 - "difficulty": "{difficulty}"
-- "starter_code": string (function signature with pass/docstring)
+- "language": string (must be "{language}")
+- "topics": array of strings (slugs from the list above)
+- "starter_code": string (valid {language} entrypoint / stubs)
 - "test_cases": list of objects with "input" (string), "expected_output" (string), "is_hidden" (bool)
-- "solution_code": string (complete working solution)
+- "solution_code": string (complete working solution in {language})
 Create 3-5 test cases. At least one should be is_hidden: true."""
 
-        result = self._call(system, f"Create a {difficulty} {language} challenge for {skill}", temperature=0.4)
+        result = self._call(
+            system,
+            f"Create one {difficulty} challenge: language={language}, skill/theme={skill}",
+            temperature=0.4,
+        )
         return result
+
+    def anne_coding_hint(
+        self,
+        *,
+        title: str,
+        description: str,
+        language: str,
+        difficulty: str | None,
+        visible_examples: list[dict[str, Any]],
+        code_excerpt: str | None,
+        stderr_excerpt: str | None,
+        test_failure_summary: str | None,
+        student_message: str | None,
+        hint_style: str,
+    ) -> dict[str, Any] | None:
+        """Return ``{\"reply\": \"...\"}`` for tutor Anne, or None if the LLM is unavailable or failed."""
+        system = """You are Anne, an expert and encouraging coding tutor on a learning platform.
+
+Strict rules:
+- Never give a complete solution or full copy-paste code that solves the assignment end-to-end.
+- You may give algorithm steps, pseudocode, debugging checklists, or one-line conceptual snippets that are not a drop-in solution.
+- Prefer Socratic teaching: ask what they tried, suggest edge cases, invariants, time/space tradeoffs, and how to narrow the bug.
+- If they share compiler/runtime errors, explain what the error usually means and how to locate the line — do not rewrite their whole program.
+- Match the problem's programming language when discussing syntax and idioms.
+- Keep the reply concise (under ~400 words). Short paragraphs or bullet points are fine.
+
+Return a JSON object with a single key \"reply\" (string, plain text or light markdown is OK)."""
+
+        parts: list[str] = [
+            f"hint_style: {hint_style}",
+            "(hint_style meanings: light = gentle nudge; stuck = structured guidance without full answer; debug = focus on errors/failing tests.)",
+            f"Challenge title: {title}",
+            f"Programming language: {language}",
+            f"Difficulty: {difficulty or 'unknown'}",
+            "Problem statement:\n" + (description or "")[:12000],
+        ]
+        if visible_examples:
+            parts.append(
+                "Public example tests only (do not assume hidden tests):\n"
+                + json.dumps(visible_examples, ensure_ascii=False)[:6000]
+            )
+        if code_excerpt and code_excerpt.strip():
+            parts.append("Learner code excerpt (may be truncated):\n```\n" + code_excerpt.strip()[:8000] + "\n```")
+        if stderr_excerpt and stderr_excerpt.strip():
+            parts.append("stderr / error snippet:\n" + stderr_excerpt.strip()[:4000])
+        if test_failure_summary and test_failure_summary.strip():
+            parts.append("Test / run feedback summary:\n" + test_failure_summary.strip()[:2500])
+        if student_message and student_message.strip():
+            parts.append("Learner message:\n" + student_message.strip()[:2000])
+
+        user_content = "\n\n".join(parts)
+        result = self._call(system, user_content, response_format="json_object", temperature=0.55)
+        if not result or not isinstance(result.get("reply"), str):
+            return None
+        reply = (result.get("reply") or "").strip()
+        if not reply:
+            return None
+        return {"reply": reply}
 
 
 llm_service = LLMService()

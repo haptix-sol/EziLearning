@@ -7,18 +7,11 @@ cd backend
 uv sync
 ```
 
-This installs Python dependencies. **Video generation** uses the **Rust Varin** CLI bundled at `Varin/` (inside `backend/`). Build it once:
+This installs Python dependencies.
 
-```bash
-cd Varin
-cargo build --release
-```
+## System dependencies (optional tooling)
 
-The API looks for `Varin/target/release/varin` (or `varin.exe` on Windows). Override with **`VARIN_CLI_PATH`** in `.env` if needed.
-
-## System dependencies (for video generation)
-
-**FFmpeg** is required for merging video segments. It is NOT a Python package — install separately.
+**FFmpeg** is optional unless you add features that shell out to it. It is not a Python package — install separately if needed.
 
 **Recommended (project-local):** extract a Windows build into **`ffmpeg/` at the repository root** (next to `backend/` and `frontend/`) so you have `ffmpeg/bin/ffmpeg.exe`. See **`../ffmpeg/README.md`**.
 
@@ -48,11 +41,15 @@ uv sync
 
 ## Configure
 
-Copy `.env.example` to `.env` and set `DATABASE_URL` (PostgreSQL port 5433, database ezilearning) and your LLM keys.
+Copy `.env.example` to `.env` and set `DATABASE_URL`, or use `POSTGRES_HOST`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_PORT`, `POSTGRES_DB` when the password contains `@` or other characters that break a single URL (default port in examples is 5433, database `ezilearning`).
 
-**FFmpeg (video / audio):** With a local install under **`../ffmpeg/`** (repo root, see `../ffmpeg/README.md`), `.env.example` sets `FFMPEG_PATH=../ffmpeg/bin/ffmpeg.exe` on Windows. Optional: `FFPROBE_PATH` if `ffprobe` is not beside `ffmpeg`. Resolution logic: `core/ffmpeg_paths.py`. On startup the API logs the resolved `ffmpeg` and `ffprobe` paths.
+**LLM:** All generation goes through [services/ai/](services/ai/) with **`LLM_PROVIDER=auto`** by default: **Bedrock** if `BEDROCK_MODEL_ID` + region (`BEDROCK_REGION`, or `AWS_DEFAULT_REGION` / `AWS_REGION` / `aws_region`) and AWS credentials are available; else **OpenAI** if `OPENAI_API_KEY` is set; else an **OpenAI-compatible** base URL. For Bedrock, set **`BEDROCK_MODEL_ID` to the exact Model ID** from the console for that region (wrong IDs cause `ValidationException: invalid model identifier`). A common Qwen3 Converse ID is `qwen.qwen3-32b-v1:0` where the model is offered. Set `LLM_PROVIDER=bedrock` to force Bedrock when multiple options exist.
 
-**Varin improvement loop:** Renders append to `varin_render_events`. After `uv run ezilearning-migrate`, run `uv run ezilearning-varin-insights` (optional days: `uv run ezilearning-varin-insights 30`). See `docs/VARIN_IMPROVEMENT_LOOP.md`.
+**FFmpeg:** With a local install under **`../ffmpeg/`** (repo root, see `../ffmpeg/README.md`), `.env.example` sets `FFMPEG_PATH=../ffmpeg/bin/ffmpeg.exe` on Windows. Optional: `FFPROBE_PATH` if `ffprobe` is not beside `ffmpeg`. Resolution logic: `core/ffmpeg_paths.py`. On startup the API logs the resolved `ffmpeg` and `ffprobe` paths.
+
+## Manim (optional — local experiments only)
+
+Manim lives entirely under **[`manim/`](manim/)** (separate uv project + venv). See **[`manim/README.md`](manim/README.md)** for install and layout. It is **not** imported by the FastAPI app.
 
 ## Database migration
 

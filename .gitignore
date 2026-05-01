@@ -2,23 +2,17 @@
 ffmpeg/*
 !ffmpeg/README.md
 
-# Varin (ManimGL) intermediate segment/scene renders — not committed
-Varin/render/
-Varin/target/
-Varin/output/
-
 # cursor2api — installed dependencies
 cursor2api/node_modules/
 cursor2api/proxy/node_modules/
 frontend/node_modules/
-varin video generator/VarinStudio/node_modules/
-varin video generator/Varin/target/
-varin video generator/Varin/output/
 
-
-
-backend/varin/target/
 backend/data/videos/
-varin video generator/videos/
-varin video generator/Varin/target/
-varin video generator/output/
+
+# Repo-local npm cache (see root .npmrc)
+.npm-cache/
+
+# Secrets — never commit
+.env
+backend/.env
+frontend/.env

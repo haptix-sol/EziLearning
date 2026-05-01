@@ -10,6 +10,33 @@ from models import (
     LevelCompletion,
     UserLevelContent,
 )
+
+
+def execution_passed_challenge_tests(execution: Execution) -> bool:
+    """True when this row is a graded submit (has test_results) and every case passed."""
+    tr = execution.test_results
+    if not tr or not isinstance(tr, list):
+        return False
+    return all(bool(t.get("passed")) for t in tr)
+
+
+def count_distinct_challenges_passed(user_id: str, db: Session) -> int:
+    """Challenges the user has fully solved at least once (submit with all tests passed)."""
+    execs = (
+        db.query(Execution)
+        .filter(
+            Execution.user_id == user_id,
+            Execution.challenge_id.isnot(None),
+            Execution.test_results.isnot(None),
+        )
+        .all()
+    )
+    solved: set[str] = set()
+    for e in execs:
+        cid = e.challenge_id
+        if cid and execution_passed_challenge_tests(e):
+            solved.add(cid)
+    return len(solved)
 from services.content_generator import generate_challenges_for_user, generate_questions_for_user
 from services.llm_client import llm_service
 
@@ -48,12 +75,8 @@ def _challenge_completed(user_id: str, challenge_id: str, db: Session) -> bool:
     execs = db.query(Execution).filter(
         Execution.user_id == user_id,
         Execution.challenge_id == challenge_id,
-        Execution.status == "completed",
     ).all()
-    for e in execs:
-        if e.test_results and all(t.get("passed") for t in e.test_results):
-            return True
-    return False
+    return any(execution_passed_challenge_tests(e) for e in execs)
 
 
 def _question_answered(user_id: str, question_id: str, db: Session) -> bool:

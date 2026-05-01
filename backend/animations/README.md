@@ -1,5 +1,5 @@
-# Animations (Varin)
+# Animations (bundled clips)
 
-**Study-plan / topic videos** are rendered by the **Rust Varin** CLI (`varin render-storyboard`) from the workspace under `backend/Varin/`. See `README.md` in the backend root for `cargo build --release`.
+Short **MP4** explainers that ship with the app live under **`static/animations/`** (served at `/animations/…`). The API uses `core.animations.match_animation` to attach a clip to challenges or study notes when the topic text matches a known filename.
 
-**Legacy prerendered clips** (e.g. binary search) may still live under `static/animations/` if present. Older docs referred to ManimGL; new installs should use the Rust engine only.
+Optional **Manim** experiments are isolated under **`../manim/`** — see **`../manim/README.md`**.

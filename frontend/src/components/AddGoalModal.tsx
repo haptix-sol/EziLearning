@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { FileText, Pencil, TrendingUp } from 'lucide-react';
 import { api } from '../lib/api';
 
 const DURATION_OPTIONS = [
@@ -33,7 +34,12 @@ export function AddGoalModal({ open, onClose }: AddGoalModalProps) {
 
   const setGoalMutation = useMutation({
     mutationFn: async (payload: { goal_type: string; goal_text?: string; target_role_id?: string; duration_days?: number }) => {
-      const { data } = await api.post('/onboarding/goal', payload);
+      const { data } = await api.post<{
+        message: string;
+        goal_id: string;
+        study_plan_id: string | null;
+        study_plan_error?: string | null;
+      }>('/onboarding/goal', payload);
       return data;
     },
     onSuccess: (data) => {
@@ -41,11 +47,14 @@ export function AddGoalModal({ open, onClose }: AddGoalModalProps) {
       queryClient.invalidateQueries({ queryKey: ['onboarding-goals'] });
       queryClient.invalidateQueries({ queryKey: ['study-plans'] });
       onClose();
-      if (data?.study_plan_id) {
-        navigate('/goals');
-      } else {
-        navigate('/roadmap');
+      if (data?.study_plan_error) {
+        const detail =
+          data.study_plan_error.length > 500 ? `${data.study_plan_error.slice(0, 500)}…` : data.study_plan_error;
+        window.alert(
+          `Your goal was saved, but the day-by-day study plan could not be generated (this is usually an LLM/API issue on the server, not your form).\n\n${detail}`
+        );
       }
+      navigate('/growth?focus=goals');
     },
   });
 
@@ -87,8 +96,8 @@ export function AddGoalModal({ open, onClose }: AddGoalModalProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <h2 style={{ color: 'var(--text-primary)', margin: 0, fontSize: 22, fontWeight: 700 }}>Add New Goal</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 24 }}>×</button>
+          <h2 style={{ color: 'var(--text-primary)', margin: 0, fontSize: 19, fontWeight: 600, letterSpacing: '-0.02em' }}>Add New Goal</h2>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 22, lineHeight: 1 }}>×</button>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
           {(['manual', 'trending', 'resume'] as const).map((type) => (
@@ -104,10 +113,25 @@ export function AddGoalModal({ open, onClose }: AddGoalModalProps) {
                 cursor: 'pointer',
               }}
             >
-              <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>
-                {type === 'manual' && '✏️ Set goal manually'}
-                {type === 'trending' && '📈 Choose trending role'}
-                {type === 'resume' && '📄 Upload resume'}
+              <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                {type === 'manual' && (
+                  <>
+                    <Pencil size={16} strokeWidth={1.65} aria-hidden />
+                    Set goal manually
+                  </>
+                )}
+                {type === 'trending' && (
+                  <>
+                    <TrendingUp size={16} strokeWidth={1.65} aria-hidden />
+                    Choose trending role
+                  </>
+                )}
+                {type === 'resume' && (
+                  <>
+                    <FileText size={16} strokeWidth={1.65} aria-hidden />
+                    Upload resume
+                  </>
+                )}
               </div>
             </button>
           ))}
@@ -146,7 +170,7 @@ export function AddGoalModal({ open, onClose }: AddGoalModalProps) {
         )}
         {(goalType === 'manual' || goalType === 'trending') && (
           <div style={{ marginBottom: 20 }}>
-            <h4 style={{ color: 'var(--text-primary)', margin: '0 0 12px', fontSize: 14, fontWeight: 600 }}>Study plan duration</h4>
+            <h4 style={{ color: 'var(--text-primary)', margin: '0 0 12px', fontSize: 13, fontWeight: 600 }}>Study plan duration</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {DURATION_OPTIONS.map((opt) => (
                 <button
@@ -161,8 +185,8 @@ export function AddGoalModal({ open, onClose }: AddGoalModalProps) {
                     cursor: 'pointer',
                   }}
                 >
-                  <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>{opt.label}</div>
-                  <div style={{ color: 'var(--text-secondary)', fontSize: 13, marginTop: 4 }}>{opt.description}</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{opt.label}</div>
+                  <div style={{ color: 'var(--text-secondary)', fontSize: 12, marginTop: 4 }}>{opt.description}</div>
                 </button>
               ))}
             </div>

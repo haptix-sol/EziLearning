@@ -5,15 +5,14 @@ from models.resume import Resume, UserProfile, ResumeSkill
 from models.content import Challenge, UserChallenge, TechnicalQuestion, UserQuestionAnswer
 from models.execution import Execution
 from models.progress import ProgressSnapshot, UserSession
-from models.study import StudyPlan, StudyLevel, DayPlan, DayPlanCompletion, UserLevel
+from models.study import StudyPlan, StudyLevel, DayPlan, DayPlanCompletion, UserLevel, VisualLessonTopicProgress
 from models.job import JobApplication
 from models.game_level import LevelCompletion, UserLevelContent
 from models.gmail import GmailOAuthToken
 from models.onboarding import UserGoal, TrendingRole
 from models.roadmap import RoadmapTopic, RoadmapTopicEdge, UserKnownTopic
 from models.mcq import DayMcq, UserMcqAnswer
-from models.video import GeneratedVideo
-from models.varin_telemetry import VarinRenderEvent
+from models.cp_portfolio import CpPlatformConnection, CpPortfolioSettings
 
 __all__ = [
     "Base",
@@ -32,6 +31,7 @@ __all__ = [
     "StudyLevel",
     "DayPlan",
     "DayPlanCompletion",
+    "VisualLessonTopicProgress",
     "UserLevel",
     "JobApplication",
     "LevelCompletion",
@@ -44,6 +44,6 @@ __all__ = [
     "UserKnownTopic",
     "DayMcq",
     "UserMcqAnswer",
-    "GeneratedVideo",
-    "VarinRenderEvent",
+    "CpPlatformConnection",
+    "CpPortfolioSettings",
 ]

@@ -8,14 +8,79 @@ def migrate():
     print("Database migration complete.")
 
 
-def varin_insights():
-    """Print Varin telemetry summary (last N days; pass days as first CLI arg, default 14)."""
-    from services.varin_telemetry import print_insights_report
-
-    print_insights_report()
-
-
 from models import Challenge, TechnicalQuestion, User, TrendingRole, RoadmapTopic, RoadmapTopicEdge
+
+# Idempotent extras: added on seed if titles are missing (existing DBs get new languages without wiping).
+_MULTILANG_CHALLENGES: list[dict] = [
+    {
+        "title": "Two Sum (JavaScript)",
+        "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nImplement function twoSum(nums, target). Test inputs are JSON arrays, e.g. [[2,7,11,15],9] means nums and target.",
+        "difficulty": "easy",
+        "language": "javascript",
+        "topics": ["arrays", "hash-table"],
+        "starter_code": "/**\n * @param {number[]} nums\n * @param {number} target\n * @returns {number[]}\n */\nfunction twoSum(nums, target) {\n  return [];\n}\n",
+        "test_cases": [
+            {"input": "[[2,7,11,15],9]", "expected_output": "[0,1]", "is_hidden": False},
+            {"input": "[[3,2,4],6]", "expected_output": "[1,2]", "is_hidden": True},
+        ],
+        "required_skills": ["JavaScript", "Algorithms"],
+    },
+    {
+        "title": "A + B (C)",
+        "description": "Read two integers from stdin (space-separated) and print their sum with no extra whitespace.",
+        "difficulty": "easy",
+        "language": "c",
+        "topics": ["math", "strings"],
+        "starter_code": "#include <stdio.h>\n\nint main(void) {\n    int a, b;\n    if (scanf(\"%d %d\", &a, &b) != 2) return 1;\n    printf(\"%d\", a + b);\n    return 0;\n}\n",
+        "test_cases": [
+            {"input": "3 5", "expected_output": "8", "is_hidden": False},
+            {"input": "10 20", "expected_output": "30", "is_hidden": True},
+        ],
+        "required_skills": ["C"],
+    },
+    {
+        "title": "A + B (C++)",
+        "description": "Read two integers from stdin (space-separated) and print their sum with no extra whitespace.",
+        "difficulty": "easy",
+        "language": "cpp",
+        "topics": ["math", "strings"],
+        "starter_code": "#include <iostream>\n\nint main() {\n    int a, b;\n    if (!(std::cin >> a >> b)) return 1;\n    std::cout << (a + b);\n    return 0;\n}\n",
+        "test_cases": [
+            {"input": "3 5", "expected_output": "8", "is_hidden": False},
+            {"input": "10 20", "expected_output": "30", "is_hidden": True},
+        ],
+        "required_skills": ["C++"],
+    },
+    {
+        "title": "A + B (Java)",
+        "description": "Read two integers from stdin (space-separated) and print their sum. Use public class Main.",
+        "difficulty": "easy",
+        "language": "java",
+        "topics": ["math"],
+        "starter_code": (
+            "import java.util.Scanner;\n\npublic class Main {\n"
+            "    public static void main(String[] args) {\n"
+            "        Scanner sc = new Scanner(System.in);\n"
+            "        int a = sc.nextInt();\n"
+            "        int b = sc.nextInt();\n"
+            "        System.out.print(a + b);\n"
+            "    }\n"
+            "}\n"
+        ),
+        "test_cases": [
+            {"input": "3 5", "expected_output": "8", "is_hidden": False},
+            {"input": "10 20", "expected_output": "30", "is_hidden": True},
+        ],
+        "required_skills": ["Java"],
+    },
+]
+
+
+def seed_multilanguage_challenges(db) -> None:
+    existing = {c.title for c in db.query(Challenge).all()}
+    for spec in _MULTILANG_CHALLENGES:
+        if spec["title"] not in existing:
+            db.add(Challenge(**spec))
 
 
 def seed():
@@ -36,6 +101,7 @@ def seed():
                     "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nExample: nums = [2, 7, 11, 15], target = 9 -> [0, 1]",
                     "difficulty": "easy",
                     "language": "python",
+                    "topics": ["arrays", "hash-table"],
                     "starter_code": "def two_sum(nums: list[int], target: int) -> list[int]:\n    \"\"\"Return indices of two numbers that add up to target.\"\"\"\n    pass",
                     "test_cases": [
                         {"input": "[2, 7, 11, 15], 9", "expected_output": "[0, 1]", "is_hidden": False},
@@ -48,6 +114,7 @@ def seed():
                     "description": "Print numbers 1 to n. For multiples of 3 print 'Fizz', multiples of 5 print 'Buzz', both print 'FizzBuzz'.",
                     "difficulty": "easy",
                     "language": "python",
+                    "topics": ["strings", "math"],
                     "starter_code": "def fizzbuzz(n: int) -> list[str]:\n    \"\"\"Return list of FizzBuzz strings for 1 to n.\"\"\"\n    pass",
                     "test_cases": [
                         {"input": "15", "expected_output": "['1','2','Fizz','4','Buzz','Fizz','7','8','Fizz','Buzz','11','Fizz','13','14','FizzBuzz']", "is_hidden": False},
@@ -119,6 +186,8 @@ def seed():
                 if from_slug in topic_ids and to_slug in topic_ids:
                     db.add(RoadmapTopicEdge(from_topic_id=topic_ids[from_slug], to_topic_id=topic_ids[to_slug]))
             print("Seeded roadmap topics")
+
+        seed_multilanguage_challenges(db)
 
         db.commit()
         print("Seed complete")

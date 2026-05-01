@@ -33,144 +33,36 @@ export function ProfileDropdown() {
   return (
     <div ref={ref} style={{ position: 'relative' }}>
       <button
+        type="button"
+        className={`ez-profile-trigger${open ? ' ez-profile-trigger--open' : ''}`}
         onClick={() => setOpen(!open)}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          padding: '8px 12px',
-          background: open ? 'var(--bg-hover)' : 'transparent',
-          border: '1px solid transparent',
-          borderRadius: 'var(--radius-md)',
-          cursor: 'pointer',
-          color: 'var(--text-primary)',
-          transition: 'all var(--duration-fast) var(--ease-out)',
-        }}
-        onMouseEnter={(e) => {
-          if (!open) e.currentTarget.style.background = 'var(--bg-hover)';
-        }}
-        onMouseLeave={(e) => {
-          if (!open) e.currentTarget.style.background = 'transparent';
-        }}
+        aria-expanded={open}
+        aria-haspopup="menu"
       >
-        <div
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: '50%',
-            overflow: 'hidden',
-            background: 'var(--gradient-accent)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}
-        >
+        <div className="ez-profile-trigger__avatar">
           {avatarUrl ? (
-            <img
-              src={avatarUrl}
-              alt=""
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
+            <img src={avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
-            <span style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>
-              {displayName.charAt(0).toUpperCase()}
-            </span>
+            <span className="ez-profile-trigger__letter">{displayName.charAt(0).toUpperCase()}</span>
           )}
         </div>
-        <div style={{ textAlign: 'left', display: 'none' }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
-            {displayName}
-          </div>
-          {me?.email && (
-            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{me.email}</div>
-          )}
-        </div>
-        <span
-          style={{
-            fontSize: 10,
-            color: 'var(--text-muted)',
-            transform: open ? 'rotate(180deg)' : 'none',
-            transition: 'transform var(--duration-fast)',
-          }}
-        >
+        <span className="ez-profile-trigger__chev" aria-hidden>
           ▼
         </span>
       </button>
 
       {open && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '100%',
-            right: 0,
-            marginTop: 8,
-            minWidth: 220,
-            background: 'var(--bg-elevated)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-md)',
-            boxShadow: 'var(--shadow-lg)',
-            zIndex: 100,
-            overflow: 'hidden',
-            animation: 'fade-in 0.15s ease-out',
-          }}
-        >
-          <div style={{ padding: 16, borderBottom: '1px solid var(--border)' }}>
-            <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
-              {displayName}
-            </div>
-            {me?.email && (
-              <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>
-                {me.email}
-              </div>
-            )}
+        <div className="ez-profile-panel" role="menu">
+          <div className="ez-profile-panel__head">
+            <div className="ez-profile-panel__name">{displayName}</div>
+            {me?.email ? <div className="ez-profile-panel__email">{me.email}</div> : null}
           </div>
-          <div style={{ padding: 8 }}>
-            <Link
-              to="/profile"
-              onClick={() => setOpen(false)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-                padding: '10px 14px',
-                borderRadius: 'var(--radius-sm)',
-                color: 'var(--text-primary)',
-                textDecoration: 'none',
-                fontSize: 14,
-                transition: 'background var(--duration-fast)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--bg-hover)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'transparent';
-              }}
-            >
-              <span>◇</span> Profile
+          <div className="ez-profile-panel__links">
+            <Link to="/profile" className="ez-profile-panel__link" role="menuitem" onClick={() => setOpen(false)}>
+              Profile
             </Link>
-            <Link
-              to="/resume"
-              onClick={() => setOpen(false)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-                padding: '10px 14px',
-                borderRadius: 'var(--radius-sm)',
-                color: 'var(--text-primary)',
-                textDecoration: 'none',
-                fontSize: 14,
-                transition: 'background var(--duration-fast)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--bg-hover)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'transparent';
-              }}
-            >
-              <span>▤</span> Resume
+            <Link to="/resume" className="ez-profile-panel__link" role="menuitem" onClick={() => setOpen(false)}>
+              Resume
             </Link>
           </div>
         </div>

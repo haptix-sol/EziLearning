@@ -1,6 +1,10 @@
-"""Content generation: questions, challenges via Cursor LLM."""
+"""Content generation: questions, challenges via configured LLM provider."""
+import random
+
 from sqlalchemy.orm import Session
 
+from core.challenge_topics import infer_topics_from_text, normalize_topics
+from core.code_languages import ALLOWED_LANGUAGES, normalize_language, preferred_language_for_skill
 from models import TechnicalQuestion, Challenge, UserProfile
 from services.llm_client import llm_service
 
@@ -37,6 +41,7 @@ FALLBACK_CHALLENGES = [
         "difficulty": "easy",
         "language": "python",
         "starter_code": "def two_sum(nums: list[int], target: int) -> list[int]:\n    pass",
+        "topics": ["arrays", "hash-table"],
         "test_cases": [
             {"input": "[2, 7, 11, 15], 9", "expected_output": "[0, 1]", "is_hidden": False},
             {"input": "[3, 2, 4], 6", "expected_output": "[1, 2]", "is_hidden": True},
@@ -89,17 +94,34 @@ def generate_challenges_for_user(user_id: str, db: Session, count: int = 3) -> l
 
     created = []
     for skill in skills[:3]:
-        data = llm_service.generate_challenge(skill, difficulty=difficulty, language="python")
+        inferred = preferred_language_for_skill(skill)
+        lang = inferred or random.choice(tuple(ALLOWED_LANGUAGES))
+        lang = normalize_language(lang)
+        if lang not in ALLOWED_LANGUAGES:
+            lang = "python"
+        data = llm_service.generate_challenge(skill, difficulty=difficulty, language=lang)
         if data:
+            tops = normalize_topics(data.get("topics") or [])
+            if not tops:
+                tops = infer_topics_from_text(
+                    data.get("title", ""),
+                    data.get("description", ""),
+                    [skill],
+                )
+            # Always persist the intended runtime language (LLM sometimes returns a mismatched "language").
+            stored_lang = normalize_language(lang)
+            if stored_lang not in ALLOWED_LANGUAGES:
+                stored_lang = "python"
             ch = Challenge(
                 title=data.get("title", "Coding Challenge"),
                 description=data.get("description", ""),
                 difficulty=data.get("difficulty", difficulty),
-                language=data.get("language", "python"),
+                language=stored_lang,
                 starter_code=data.get("starter_code"),
                 solution_code=data.get("solution_code"),
                 test_cases=data.get("test_cases", []),
                 required_skills=[skill],
+                topics=tops,
             )
             db.add(ch)
             db.flush()
@@ -114,6 +136,7 @@ def generate_challenges_for_user(user_id: str, db: Session, count: int = 3) -> l
                 starter_code=fc["starter_code"],
                 test_cases=fc["test_cases"],
                 required_skills=fc["required_skills"],
+                topics=fc.get("topics") or infer_topics_from_text(fc["title"], fc["description"], fc.get("required_skills")),
             )
             db.add(ch)
             db.flush()

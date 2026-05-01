@@ -2,6 +2,8 @@ import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api, type ResumeProfile } from '../lib/api';
+import { PageHeader } from '../components/ui/PageHeader';
+import { SkeletonLine, SkeletonLineLg } from '../components/ui/Skeleton';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -16,6 +18,8 @@ export function ProfilePage() {
     target_role: '',
     target_industry: '',
   });
+  const [downloadError, setDownloadError] = useState('');
+  const [isDownloadingResume, setIsDownloadingResume] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
 
@@ -24,6 +28,18 @@ export function ProfilePage() {
     queryFn: async () => {
       try {
         const { data } = await api.get('/resumes/profile');
+        return data;
+      } catch {
+        return null;
+      }
+    },
+  });
+
+  const { data: resumeMeta } = useQuery<{ file_name: string | null; file_type: string | null } | null>({
+    queryKey: ['resume'],
+    queryFn: async () => {
+      try {
+        const { data } = await api.get('/resumes/me');
         return data;
       } catch {
         return null;
@@ -90,10 +106,44 @@ export function ProfilePage() {
     e.target.value = '';
   };
 
+  const handleResumeDownload = async () => {
+    setDownloadError('');
+    setIsDownloadingResume(true);
+    try {
+      const response = await fetch(`${API_BASE}/resumes/me/download`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        throw new Error('Unable to download resume');
+      }
+
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      const fallbackName = resumeMeta?.file_name || 'resume.pdf';
+      const contentDisposition = response.headers.get('content-disposition');
+      const fileNameMatch = contentDisposition?.match(/filename="?([^"]+)"?/i);
+      anchor.href = downloadUrl;
+      anchor.download = fileNameMatch?.[1] || fallbackName;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (err) {
+      setDownloadError(err instanceof Error ? err.message : 'Download failed');
+    } finally {
+      setIsDownloadingResume(false);
+    }
+  };
+
   if (isLoading) {
     return (
-      <div className="animate-fade-in" style={{ padding: 48, textAlign: 'center', color: 'var(--text-secondary)' }}>
-        Loading profile...
+      <div className="animate-fade-in ez-page-zone" aria-busy="true">
+        <PageHeader title="Profile" description="Loading…" />
+        <SkeletonLineLg />
+        <SkeletonLine />
+        <SkeletonLine />
       </div>
     );
   }
@@ -102,52 +152,62 @@ export function ProfilePage() {
   const displayName = profile?.full_name || 'Guest';
 
   return (
-    <div className="animate-fade-in">
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        marginBottom: 32,
-        flexWrap: 'wrap',
-        gap: 20,
-      }}>
-        <div>
-          <h1 style={{
-            color: 'var(--text-primary)',
-            margin: '0 0 6px',
-            fontSize: 28,
-            fontWeight: 700,
-            letterSpacing: '-0.02em',
-          }}>
-            Profile
-          </h1>
-          <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: 15 }}>
-            Manage your profile and avatar
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <Link to="/resume" className="btn btn-ghost" style={{ textDecoration: 'none' }}>
-            Upload Resume
-          </Link>
-          {!editing ? (
-            <button onClick={handleEdit} className="btn btn-primary">
-              Edit Profile
+    <div className="animate-fade-in ez-page-zone">
+      <PageHeader
+        title="Profile"
+        description="What employers see alongside your resume—keep it current."
+        actions={
+          <>
+            <Link to="/resume" className="btn btn-ghost btn-sm">
+              Resume
+            </Link>
+            <button
+              type="button"
+              onClick={handleResumeDownload}
+              disabled={!resumeMeta || isDownloadingResume}
+              className="btn btn-ghost btn-sm"
+            >
+              {isDownloadingResume ? 'Downloading…' : 'Download resume'}
             </button>
-          ) : (
-            <>
-              <button onClick={() => setEditing(false)} className="btn btn-ghost">
-                Cancel
+            {!editing ? (
+              <button type="button" onClick={handleEdit} className="btn btn-primary btn-sm">
+                Edit
               </button>
-              <button
-                onClick={handleSave}
-                disabled={updateMutation.isPending}
-                className="btn btn-primary"
-              >
-                {updateMutation.isPending ? 'Saving...' : 'Save'}
-              </button>
-            </>
-          )}
+            ) : (
+              <>
+                <button type="button" onClick={() => setEditing(false)} className="btn btn-ghost btn-sm">
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={updateMutation.isPending}
+                  className="btn btn-primary btn-sm"
+                >
+                  {updateMutation.isPending ? 'Saving…' : 'Save'}
+                </button>
+              </>
+            )}
+          </>
+        }
+      />
+
+      {downloadError && (
+        <div className="card" style={{ padding: 14, marginBottom: 16, borderColor: 'rgba(185, 28, 28, 0.3)', color: 'var(--danger)' }}>
+          {downloadError}
         </div>
+      )}
+
+      <div className="card" style={{ padding: 16, marginBottom: 20, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12 }}>
+        <div style={{ flex: '1 1 200px' }}>
+          <strong style={{ display: 'block', marginBottom: 4 }}>Competitive programming portfolio</strong>
+          <span className="text-muted" style={{ fontSize: '0.9rem' }}>
+            Link LeetCode, Codeforces, GitHub, and more—verify and share a public showcase.
+          </span>
+        </div>
+        <Link to="/cp-portfolio" className="btn btn-secondary btn-sm">
+          Open CP portfolio
+        </Link>
       </div>
 
       {/* Avatar section */}

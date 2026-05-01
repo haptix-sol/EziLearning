@@ -13,7 +13,21 @@ from core.ffmpeg_paths import get_ffmpeg_executable, get_ffprobe_executable
 from database import init_db
 
 _logger = logging.getLogger(__name__)
-from api.routers import resumes, challenges, questions, executions, progress, content, study, jobs, levels, gmail, onboarding, roadmap, videos
+from api.routers import (
+    resumes,
+    challenges,
+    questions,
+    executions,
+    progress,
+    content,
+    study,
+    jobs,
+    levels,
+    gmail,
+    onboarding,
+    roadmap,
+    cp_portfolio,
+)
 
 
 @asynccontextmanager
@@ -35,9 +49,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Regex covers any dev port on localhost / 127.0.0.1 (Starlette returns 400 preflight if Origin is not allowed).
+_LOCAL_DEV_ORIGIN_REGEX = r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$"
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
+    allow_origin_regex=_LOCAL_DEV_ORIGIN_REGEX,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -55,7 +72,7 @@ app.include_router(levels.router)
 app.include_router(gmail.router)
 app.include_router(onboarding.router)
 app.include_router(roadmap.router)
-app.include_router(videos.router)
+app.include_router(cp_portfolio.router)
 
 # Serve prerendered animations (binary-search.mp4, bubble-sort.mp4, etc.)
 _animations_dir = Path(__file__).resolve().parent.parent / "static" / "animations"
@@ -77,4 +94,20 @@ def handle_app_exception(request, exc: AppException):
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    from services.ai.factory import get_llm_provider
+
+    prov = get_llm_provider()
+    return {"status": "ok", "llm_provider": prov.name if prov else None}
+
+
+@app.get("/health/deps")
+def health_deps():
+    """Support/debug: resolved tool paths (avoid exposing in production without auth)."""
+    from services.ai.factory import get_llm_provider
+
+    prov = get_llm_provider()
+    return {
+        "ffmpeg": get_ffmpeg_executable(),
+        "ffprobe": get_ffprobe_executable(),
+        "llm_provider": prov.name if prov else None,
+    }

@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { FileText, Sparkles, UploadCloud } from 'lucide-react';
 import { api, type ResumeData } from '../lib/api';
+import { PageHeader } from '../components/ui/PageHeader';
 
 export function ResumePage() {
   const [file, setFile] = useState<File | null>(null);
   const [uploadError, setUploadError] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: resume, isLoading } = useQuery<ResumeData | null>({
@@ -67,123 +70,127 @@ export function ResumePage() {
     uploadMutation.mutate(file);
   };
 
-  return (
-    <div className="animate-fade-in">
-      <h1 style={{
-        color: 'var(--text-primary)',
-        marginBottom: 8,
-        fontSize: 28,
-        fontWeight: 700,
-        letterSpacing: '-0.02em',
-      }}>
-        Resume
-      </h1>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: 32, fontSize: 15 }}>
-        Upload your resume to extract skills and personalize your preparation.
-      </p>
+  const handleFilePicked = (picked: File | null) => {
+    if (!picked) return;
+    if (!picked.name.match(/\.(pdf|docx)$/i)) {
+      setUploadError('Only PDF and DOCX files are supported');
+      return;
+    }
+    setUploadError('');
+    setFile(picked);
+  };
 
-      <div className="card animate-slide-up" style={{ marginBottom: 28, padding: 28 }}>
-        <h3 style={{ color: 'var(--text-primary)', marginBottom: 12, fontSize: 18, fontWeight: 600 }}>
-          Upload Resume
-        </h3>
-        <p style={{ color: 'var(--text-secondary)', marginBottom: 20, fontSize: 14 }}>
-          PDF or DOCX. We'll extract skills, experience, and education.
-        </p>
-        <div
-          style={{
-            padding: 24,
-            background: 'var(--bg-base)',
-            borderRadius: 'var(--radius-md)',
-            border: '2px dashed var(--border)',
-            marginBottom: 16,
-            transition: 'border-color var(--duration-fast), background var(--duration-fast)',
-          }}
+  const profile = resume?.profile;
+
+  return (
+    <div className="animate-fade-in ez-page-zone">
+      <PageHeader
+        title="Resume center"
+        description="Upload once—we extract skills and sync your profile. Generated questions and challenges use what we learn here."
+      />
+
+      <section className="card animate-slide-up ez-resume-shell">
+        <div className="ez-resume-shell__header">
+          <h3 className="ez-resume-shell__title">Upload resume</h3>
+          <p className="ez-resume-shell__subtitle">
+            PDF or DOCX. We extract skills, experience, and education to personalize your learning path.
+          </p>
+        </div>
+
+        <label
+          className={`ez-resume-dropzone${isDragging ? ' ez-resume-dropzone--drag' : ''}`}
           onDragOver={(e) => {
             e.preventDefault();
-            e.currentTarget.style.borderColor = 'var(--accent)';
-            e.currentTarget.style.background = 'var(--accent-muted)';
+            setIsDragging(true);
           }}
-          onDragLeave={(e) => {
-            e.currentTarget.style.borderColor = 'var(--border)';
-            e.currentTarget.style.background = 'var(--bg-base)';
-          }}
+          onDragLeave={() => setIsDragging(false)}
           onDrop={(e) => {
             e.preventDefault();
-            e.currentTarget.style.borderColor = 'var(--border)';
-            e.currentTarget.style.background = 'var(--bg-base)';
-            const f = e.dataTransfer.files[0];
-            if (f && /\.(pdf|docx)$/i.test(f.name)) setFile(f);
+            setIsDragging(false);
+            handleFilePicked(e.dataTransfer.files?.[0] || null);
           }}
         >
           <input
             type="file"
             accept=".pdf,.docx"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-            style={{
-              color: 'var(--text-secondary)',
-              fontSize: 14,
-            }}
+            onChange={(e) => handleFilePicked(e.target.files?.[0] || null)}
+            className="ez-resume-dropzone__input"
           />
-          {file && (
-            <p style={{ marginTop: 12, color: 'var(--success)', fontSize: 14 }}>
-              ✓ {file.name}
-            </p>
+          <div className="ez-resume-dropzone__icon" aria-hidden>
+            <UploadCloud size={20} strokeWidth={1.9} />
+          </div>
+          <div className="ez-resume-dropzone__title">Drop your resume here</div>
+          <p className="ez-resume-dropzone__hint">or click to choose a file (max 5MB)</p>
+          <span className="ez-resume-dropzone__formats">Supports .pdf and .docx</span>
+        </label>
+
+        {file && (
+          <div className="ez-resume-picked">
+            <FileText size={16} strokeWidth={1.9} aria-hidden />
+            <span className="ez-resume-picked__name">{file.name}</span>
+            <span className="ez-resume-picked__size">{(file.size / (1024 * 1024)).toFixed(2)} MB</span>
+          </div>
+        )}
+
+        <div className="ez-resume-actions">
+          <button onClick={handleUpload} disabled={!file || uploadMutation.isPending} className="btn btn-primary">
+            {uploadMutation.isPending ? 'Processing…' : 'Upload resume'}
+          </button>
+          {resume?.file_name && (
+            <span className="ez-resume-actions__meta">Latest upload: {resume.file_name}</span>
           )}
         </div>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-          <button
-            onClick={handleUpload}
-            disabled={!file || uploadMutation.isPending}
-            className="btn btn-primary"
-          >
-            {uploadMutation.isPending ? 'Processing...' : 'Upload'}
-          </button>
-        </div>
-        {uploadError && (
-          <p style={{ color: 'var(--danger)', marginTop: 16, fontSize: 14 }}>
-            {uploadError}
-          </p>
-        )}
-      </div>
 
-      {resume?.profile && (
-        <div className="card animate-slide-up" style={{ marginBottom: 28, padding: 28 }}>
-          <h3 style={{ color: 'var(--text-primary)', marginBottom: 12, fontSize: 18, fontWeight: 600 }}>
-            Extracted Profile
-          </h3>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: 20 }}>
-            Experience: {resume.profile.experience_level || 'N/A'} • Years: {resume.profile.years_experience ?? 'N/A'}
+        {uploadError && (
+          <p className="ez-resume-error">{uploadError}</p>
+        )}
+      </section>
+
+      {profile && (
+        <div className="ez-milestone-card animate-slide-up">
+          <div className="ez-milestone-card__title">Profile unlocked</div>
+          <p className="ez-milestone-card__desc">
+            Your prep path, level content, and interview questions can now align with these skills. Tailor applications from the Jobs area when you are ready.
           </p>
-          {resume.profile.skills?.length > 0 && (
-            <div style={{ marginBottom: 24 }}>
-              <h4 style={{ color: 'var(--text-muted)', marginBottom: 12, fontSize: 13, fontWeight: 600 }}>
-                Skills
-              </h4>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-                {resume.profile.skills.map((s) => (
-                  <span
-                    key={s.skill_name}
-                    className="badge badge-info"
-                    style={{ padding: '6px 12px', fontSize: 13 }}
-                  >
+        </div>
+      )}
+
+      {profile && (
+        <section className="card animate-slide-up ez-resume-profile">
+          <div className="ez-resume-profile__header">
+            <div>
+              <h3 className="ez-resume-profile__title">Extracted profile</h3>
+              <p className="ez-resume-profile__subtitle">
+                Experience: {profile.experience_level || 'N/A'} • Years: {profile.years_experience ?? 'N/A'}
+              </p>
+            </div>
+            <button
+              onClick={() => generateMutation.mutate()}
+              disabled={generateMutation.isPending}
+              className="btn btn-accent"
+            >
+              <Sparkles size={15} strokeWidth={1.9} aria-hidden />
+              {generateMutation.isPending ? 'Generating…' : 'Generate Questions & Challenges'}
+            </button>
+          </div>
+
+          {profile.skills?.length > 0 && (
+            <div className="ez-resume-profile__skills">
+              <h4 className="ez-resume-profile__skills-title">Skills detected</h4>
+              <div className="ez-resume-profile__skills-list">
+                {profile.skills.map((s) => (
+                  <span key={s.skill_name} className="badge badge-info ez-resume-skill-pill">
                     {s.skill_name}
                   </span>
                 ))}
               </div>
             </div>
           )}
-          <button
-            onClick={() => generateMutation.mutate()}
-            disabled={generateMutation.isPending}
-            className="btn btn-accent"
-          >
-            {generateMutation.isPending ? 'Generating...' : 'Generate Questions & Challenges'}
-          </button>
-        </div>
+        </section>
       )}
 
       {!resume && !isLoading && (
-        <p style={{ color: 'var(--text-muted)' }}>Upload a resume to get started.</p>
+        <p className="ez-resume-empty">Upload a resume to get started.</p>
       )}
     </div>
   );

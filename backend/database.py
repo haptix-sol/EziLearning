@@ -34,8 +34,8 @@ from models import (
     UserKnownTopic,
     DayMcq,
     UserMcqAnswer,
-    GeneratedVideo,
-    VarinRenderEvent,  # noqa: F401 — registered on Base for create_all
+    CpPlatformConnection,
+    CpPortfolioSettings,
 )
 
 
@@ -69,10 +69,70 @@ def init_db() -> None:
     _migrate_user_profile_avatar()
     _migrate_user_goal_plan()
     _migrate_job_columns()
-    _migrate_video_file_path_nullable()
-    _migrate_video_columns()
     _migrate_user_goal_study_plan_fk()
     _migrate_user_known_topic_goal_id()
+    _migrate_challenge_topics()
+    _backfill_challenge_topics()
+    _migrate_visual_lesson_generated_manifest()
+
+
+def _migrate_challenge_topics() -> None:
+    """Add challenges.topics JSON for topic-wise browse (arrays, linked-list, streams, …)."""
+    from sqlalchemy import text, inspect
+
+    insp = inspect(engine)
+    if "challenges" not in insp.get_table_names():
+        return
+    existing = {c["name"] for c in insp.get_columns("challenges")}
+    if "topics" in existing:
+        return
+    is_pg = "postgresql" in str(engine.url)
+    with engine.connect() as conn:
+        if is_pg:
+            conn.execute(text("ALTER TABLE challenges ADD COLUMN topics JSONB DEFAULT '[]'::jsonb"))
+        else:
+            conn.execute(text("ALTER TABLE challenges ADD COLUMN topics JSON DEFAULT '[]'"))
+        conn.commit()
+
+
+def _migrate_visual_lesson_generated_manifest() -> None:
+    """Add generated_manifest JSON to visual_lesson_topic_progress for LLM-guided lessons."""
+    from sqlalchemy import text, inspect
+
+    insp = inspect(engine)
+    if "visual_lesson_topic_progress" not in insp.get_table_names():
+        return
+    existing = {c["name"] for c in insp.get_columns("visual_lesson_topic_progress")}
+    if "generated_manifest" in existing:
+        return
+    is_pg = "postgresql" in str(engine.url)
+    try:
+        with engine.connect() as conn:
+            if is_pg:
+                conn.execute(text("ALTER TABLE visual_lesson_topic_progress ADD COLUMN generated_manifest JSONB"))
+            else:
+                conn.execute(text("ALTER TABLE visual_lesson_topic_progress ADD COLUMN generated_manifest JSON"))
+            conn.commit()
+    except Exception:
+        pass
+
+
+def _backfill_challenge_topics() -> None:
+    """Infer topic tags for rows that still have an empty topics list."""
+    from core.challenge_topics import infer_topics_from_text
+
+    db = SessionLocal()
+    try:
+        for c in db.query(Challenge).all():
+            cur = c.topics if c.topics is not None else []
+            if isinstance(cur, list) and len(cur) > 0:
+                continue
+            c.topics = infer_topics_from_text(c.title, c.description or "", c.required_skills or [])
+        db.commit()
+    except Exception:
+        db.rollback()
+    finally:
+        db.close()
 
 
 def _migrate_user_profile_columns() -> None:
@@ -184,51 +244,6 @@ def _migrate_user_goal_plan() -> None:
                 conn.commit()
         except Exception:
             pass
-
-
-def _migrate_video_columns() -> None:
-    """Add missing columns to generated_videos (caption_file_path, topic_slug)."""
-    from sqlalchemy import text, inspect
-    insp = inspect(engine)
-    if "generated_videos" not in insp.get_table_names():
-        return
-    existing = {c["name"] for c in insp.get_columns("generated_videos")}
-    cols_to_add = [
-        ("caption_file_path", "VARCHAR(512)"),
-        ("topic_slug", "VARCHAR(255)"),
-        ("status_message", "VARCHAR(256)"),
-        ("segments_done", "INTEGER"),
-        ("segments_total", "INTEGER"),
-    ]
-    for col_name, col_type in cols_to_add:
-        if col_name in existing:
-            continue
-        try:
-            with engine.connect() as conn:
-                conn.execute(text(f"ALTER TABLE generated_videos ADD COLUMN {col_name} {col_type}"))
-                conn.commit()
-        except Exception:
-            pass
-
-
-def _migrate_video_file_path_nullable() -> None:
-    """Allow file_path to be NULL on generated_videos (set when generation completes)."""
-    from sqlalchemy import text, inspect
-    insp = inspect(engine)
-    if "generated_videos" not in insp.get_table_names():
-        return
-    is_pg = "postgresql" in str(engine.url)
-    if not is_pg:
-        return  # SQLite: would need table recreate
-    for col in insp.get_columns("generated_videos"):
-        if col["name"] == "file_path" and col.get("nullable") is False:
-            try:
-                with engine.connect() as conn:
-                    conn.execute(text("ALTER TABLE generated_videos ALTER COLUMN file_path DROP NOT NULL"))
-                    conn.commit()
-            except Exception:
-                pass
-            break
 
 
 def _migrate_user_goal_study_plan_fk() -> None:

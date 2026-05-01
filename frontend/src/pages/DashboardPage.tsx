@@ -1,104 +1,88 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { ArrowRight, Compass, Flame, Sparkles, Target } from 'lucide-react';
 import { api, type Progress, type LevelProgress } from '../lib/api';
 
-/** Home page: each destination appears once in “Explore”; hero & stats serve different jobs (no duplicate feature grids). */
 const EXPLORE_GROUPS: {
   title: string;
   blurb: string;
-  tiles: { to: string; label: string; desc: string; span: 'lg' | 'md'; accent: string }[];
+  tiles: { to: string; label: string; desc: string; span: 'lg' | 'md' }[];
 }[] = [
   {
     title: 'Plan your path',
-    blurb: 'Sequences and maps—nothing here repeats in Practice or Career blocks.',
+    blurb: 'Role-aware roadmap and a day-by-day study plan—no duplicate shortcuts elsewhere.',
     tiles: [
       {
         to: '/roadmap',
         label: 'AI roadmap',
-        desc: 'Topic order and milestones tailored to your target role.',
+        desc: 'Topic order and milestones aligned to where you want to land.',
         span: 'lg',
-        accent: '#0d7a4f',
       },
       {
         to: '/study',
         label: 'Study plan',
-        desc: 'Daily tasks and pacing so prep stays consistent.',
+        desc: 'Daily tasks, pacing, notes, and quizzes tied to your roadmap.',
         span: 'lg',
-        accent: '#1565c0',
       },
     ],
   },
   {
-    title: 'Practice & recall',
-    blurb: 'Active learning: code, Q&A, and your own notes.',
+    title: 'Practice and recall',
+    blurb: 'Active prep: questions, coding, and notes—some challenges link to prerendered explainer clips when topics match.',
     tiles: [
       {
         to: '/questions',
         label: 'Interview questions',
         desc: 'Skill-tagged Q&A with difficulty cues.',
         span: 'md',
-        accent: '#6a1b9a',
       },
       {
         to: '/challenges',
         label: 'Coding challenges',
-        desc: 'Hands-on problems aligned with your profile.',
+        desc: 'Hands-on problems; matching topics can show prerendered animations.',
         span: 'md',
-        accent: '#c27a00',
       },
       {
         to: '/notes',
         label: 'Notes',
-        desc: 'Consolidate concepts while videos generate in the background.',
+        desc: 'Capture concepts alongside your daily plan.',
         span: 'md',
-        accent: '#00838f',
       },
     ],
   },
   {
     title: 'Career surface',
-    blurb: 'Artifacts employers see and roles you pursue.',
+    blurb: 'Resume-derived profile, applications, and the story you show employers.',
     tiles: [
       {
         to: '/resume',
         label: 'Resume',
-        desc: 'Upload, parse, and keep your story accurate.',
+        desc: 'Upload, parse, and keep skills and summary in sync.',
         span: 'md',
-        accent: '#37474f',
       },
       {
         to: '/jobs',
         label: 'Applications',
-        desc: 'Track where you applied and what’s next.',
+        desc: 'Track where you applied and what is next.',
         span: 'md',
-        accent: '#0d7a4f',
       },
       {
         to: '/profile',
         label: 'Profile',
-        desc: 'Resume-derived profile you can refine anytime.',
+        desc: 'Refine the profile your resume powers.',
         span: 'md',
-        accent: '#1565c0',
       },
     ],
   },
   {
-    title: 'Media & motivation',
-    blurb: 'Watch and commit—separate from the practice block above.',
+    title: 'Growth hub',
+    blurb: 'Goals, level map, and practice stats in one place.',
     tiles: [
       {
-        to: '/videos',
-        label: 'Video tutorials',
-        desc: 'Explainer playback for topics you care about.',
+        to: '/growth',
+        label: 'Growth hub',
+        desc: 'Track goals, stages, streaks, and activity without jumping between menus.',
         span: 'lg',
-        accent: '#c62828',
-      },
-      {
-        to: '/goals',
-        label: 'My goals',
-        desc: 'Targets, durations, and trending roles in one place.',
-        span: 'lg',
-        accent: '#6a1b9a',
       },
     ],
   },
@@ -121,179 +105,193 @@ export function DashboardPage() {
     },
   });
 
+  const { data: onboarding } = useQuery<{ has_goal?: boolean }>({
+    queryKey: ['onboarding-status'],
+    queryFn: async () => {
+      const { data } = await api.get('/onboarding/status');
+      return data;
+    },
+  });
+
+  const needsGoal = onboarding?.has_goal === false;
+  const exploreCount = EXPLORE_GROUPS.reduce((sum, group) => sum + group.tiles.length, 0);
+
   return (
-    <div className="animate-fade-in">
-      <section className="ez-hero animate-slide-up" aria-labelledby="home-hero-title">
-        <div className="ez-hero__grid">
+    <div className="animate-fade-in ez-page-zone">
+      <section className="ez-overview-hero animate-slide-up" aria-labelledby="home-hero-title">
+        <div className="ez-overview-hero__content">
           <div>
-            <h1 id="home-hero-title">What do you want to master today?</h1>
+            <span className="ez-overview-kicker">
+              <Sparkles size={14} strokeWidth={2} aria-hidden />
+              Overview workspace
+            </span>
+            <h1 id="home-hero-title">Build momentum with one clear flow</h1>
             <p>
-              Pick up your study plan, unlock the next level, or dive into practice—your portal stays
-              organized so each area has a clear job.
+              Plan your roadmap, finish daily levels, and practice with intent. Everything below is arranged by what you do
+              next, not by feature noise.
             </p>
-            <div className="ez-hero__cta">
-              <Link to="/study" className="btn btn-primary">
-                Continue studying
+            <div className="ez-overview-hero__cta ez-cta-row">
+              <Link to={needsGoal ? '/onboarding' : '/study'} className="btn btn-primary btn-pill">
+                {needsGoal ? 'Choose your goal' : 'Continue studying'}
               </Link>
-              <Link to="/levels" className="btn btn-ghost">
-                Level map
+              <Link to="/growth" className="btn btn-ghost btn-pill">
+                Growth hub
+              </Link>
+              <Link to="/roadmap" className="btn btn-ghost btn-pill">
+                Roadmap
               </Link>
             </div>
           </div>
-          <div className="ez-hero__visual" aria-hidden>
-            📚
+          <div className="ez-overview-hero__stats">
+            <article className="ez-overview-stat-card">
+              <div className="ez-overview-stat-card__label">Current level</div>
+              <div className="ez-overview-stat-card__value">{level?.level ?? '—'}</div>
+              <p className="ez-overview-stat-card__meta">{level ? `${level.progress_percent}% to next level` : 'Loading your momentum'}</p>
+            </article>
+            <article className="ez-overview-stat-card">
+              <div className="ez-overview-stat-card__label">Practice streak</div>
+              <div className="ez-overview-stat-card__value">{level ? `${level.streak_days} days` : '—'}</div>
+              <p className="ez-overview-stat-card__meta">Consistency compounds your XP.</p>
+            </article>
+            <article className="ez-overview-stat-card">
+              <div className="ez-overview-stat-card__label">Total areas</div>
+              <div className="ez-overview-stat-card__value">{exploreCount}</div>
+              <p className="ez-overview-stat-card__meta">Roadmap, study, practice, and career stack.</p>
+            </article>
           </div>
         </div>
       </section>
 
       {level && (
-        <section
-          className="card animate-slide-up"
-          style={{
-            marginBottom: 40,
-            padding: 24,
-            background: 'linear-gradient(135deg, #ffffff 0%, #f0faf5 100%)',
-            border: '1px solid var(--border)',
-          }}
-          aria-labelledby="momentum-title"
-        >
-          <h2
-            id="momentum-title"
-            className="ez-section-title"
-            style={{ marginBottom: 16, color: 'var(--text-primary)', fontSize: 18, letterSpacing: '-0.02em', textTransform: 'none' }}
-          >
+        <section className="ez-momentum ez-overview-momentum animate-slide-up" aria-labelledby="momentum-title">
+          <h2 id="momentum-title" className="ez-momentum__title">
             Your momentum
           </h2>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: 24,
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-              <div
-                style={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: 16,
-                  background: 'var(--gradient-accent)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 26,
-                  fontWeight: 800,
-                  color: '#fff',
-                  boxShadow: 'var(--shadow-glow)',
-                  animation: 'pulse-glow 3s ease-in-out infinite',
-                }}
-              >
-                {level.level}
-              </div>
+          <div className="ez-momentum__row">
+            <div className="ez-momentum__left">
+              <div className="ez-momentum__level ez-momentum__level--pulse">{level.level}</div>
               <div>
-                <p style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
-                  Level {level.level}
-                </p>
-                <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-secondary)' }}>
+                <p className="ez-momentum__name">Level {level.level}</p>
+                <p className="ez-momentum__xp-line">
                   {level.xp} / {level.xp_to_next_level} XP to the next level
                 </p>
-                <div
-                  style={{
-                    width: 'min(240px, 100%)',
-                    maxWidth: '100%',
-                    height: 8,
-                    background: 'var(--bg-active)',
-                    borderRadius: 'var(--radius-full)',
-                    marginTop: 12,
-                    overflow: 'hidden',
-                  }}
-                >
-                  <div
-                    style={{
-                      width: `${level.progress_percent}%`,
-                      height: '100%',
-                      background: 'var(--gradient-accent)',
-                      borderRadius: 'var(--radius-full)',
-                      transition: 'width 0.6s var(--ease-spring)',
-                    }}
-                  />
+                <div className="ez-momentum__bar-track">
+                  <div className="ez-momentum__bar-fill" style={{ width: `${level.progress_percent}%` }} />
                 </div>
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-              <span className="badge badge-warning" style={{ fontSize: 13, padding: '8px 14px' }}>
-                🔥 {level.streak_days}-day streak
+            <div className="ez-momentum__actions">
+              <span className="ez-pill-streak">
+                <Flame size={14} strokeWidth={2} aria-hidden />
+                {level.streak_days}-day streak
               </span>
-              <Link to="/progress" className="btn btn-ghost" style={{ fontSize: 13 }}>
-                Full stats
+              <Link to="/growth?focus=activity" className="btn btn-ghost btn-pill btn-sm">
+                Activity
               </Link>
             </div>
           </div>
         </section>
       )}
 
-      <section aria-labelledby="explore-title">
-        <h2 id="explore-title" className="ez-section-title">
-          Explore by focus
-        </h2>
-        <p style={{ margin: '-8px 0 24px', color: 'var(--text-secondary)', fontSize: 15, maxWidth: 640 }}>
-          Each block below lists different destinations. Nothing is duplicated across blocks—navigation
-          lives in the bar above; this is your map of what each area is for.
-        </p>
+      <section className="ez-overview-layout" aria-labelledby="explore-title">
+        <div>
+          <h2 id="explore-title" className="ez-section-title">
+            Explore by focus
+          </h2>
+          <p className="ez-explore-lead">
+            Jump into the right lane quickly. Each block is a focused part of your learning workflow.
+          </p>
 
-        {EXPLORE_GROUPS.map((group) => (
-          <div key={group.title} style={{ marginBottom: 36 }}>
-            <h3 style={{ margin: '0 0 4px', fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>
-              {group.title}
-            </h3>
-            <p style={{ margin: '0 0 16px', fontSize: 13, color: 'var(--text-muted)' }}>{group.blurb}</p>
-            <div className="ez-bento stagger-children" style={{ marginBottom: 0 }}>
-              {group.tiles.map((tile) => (
-                <Link
-                  key={tile.to}
-                  to={tile.to}
-                  className={`card card-interactive ez-tile ez-bento__tile--${tile.span}`}
-                  style={{
-                    borderTop: `3px solid ${tile.accent}`,
-                  }}
-                >
-                  <div className="ez-tile__label">{tile.label}</div>
-                  <p className="ez-tile__desc">{tile.desc}</p>
-                  <span className="ez-tile__meta">Open →</span>
-                </Link>
-              ))}
+          {EXPLORE_GROUPS.map((group) => (
+            <div key={group.title} className="ez-explore-group ez-explore-group--overview">
+              <h3 className="ez-explore-group__title">{group.title}</h3>
+              <p className="ez-explore-group__blurb">{group.blurb}</p>
+              <div className="ez-bento stagger-children ez-overview-bento">
+                {group.tiles.map((tile) => (
+                  <Link
+                    key={tile.to}
+                    to={tile.to}
+                    className={`card card-interactive ez-tile ez-explore-tile ez-bento__tile--${tile.span}`}
+                  >
+                    <div className="ez-tile__label">{tile.label}</div>
+                    <p className="ez-tile__desc">{tile.desc}</p>
+                    <span className="ez-tile__meta">
+                      Open <ArrowRight size={12} strokeWidth={2} style={{ verticalAlign: 'middle', marginLeft: 4 }} aria-hidden />
+                    </span>
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+
+        <aside className="ez-overview-side">
+          <section className="ez-overview-panel">
+            <h3 className="ez-overview-panel__title">
+              <Target size={15} strokeWidth={1.9} aria-hidden />
+              Today focus
+            </h3>
+            <ul className="ez-overview-checklist">
+              <li>{needsGoal ? 'Choose a clear target role and time horizon.' : 'Complete your next study level.'}</li>
+              <li>Practice with at least one coding challenge.</li>
+              <li>Capture one key concept in notes.</li>
+            </ul>
+          </section>
+
+          <section className="ez-overview-panel">
+            <h3 className="ez-overview-panel__title">
+              <Compass size={15} strokeWidth={1.9} aria-hidden />
+              Quick routes
+            </h3>
+            <div className="ez-overview-links">
+              <Link to="/study" className="ez-overview-link">Open study plan</Link>
+              <Link to="/growth?focus=activity" className="ez-overview-link">Growth &amp; activity</Link>
+              <Link to="/jobs" className="ez-overview-link">Track applications</Link>
+            </div>
+          </section>
+        </aside>
+      </section>
+
+      <section className="ez-under-hood" aria-labelledby="under-hood-title">
+        <h2 id="under-hood-title" className="ez-under-hood__title">
+          What is different here
+        </h2>
+        <p className="ez-under-hood__lead">
+          Built around real pipelines in the product—not generic “learning” copy.
+        </p>
+        <ul className="ez-under-hood__list">
+          <li className="ez-under-hood__item">
+            <strong>Adaptive study graph</strong>
+            Roadmap and daily plan connect to levels, XP, and streaks so effort shows up as progression, not busywork.
+          </li>
+          <li className="ez-under-hood__item">
+            <strong>Notes and optional clips</strong>
+            Study notes open in a focused view; when a topic lines up with a bundled animation, you get a simple embedded clip—not a separate render pipeline.
+          </li>
+          <li className="ez-under-hood__item">
+            <strong>Practice tied to concepts</strong>
+            Challenges can link to prerendered animations when the topic matches, so code and visuals reinforce the same idea.
+          </li>
+        </ul>
       </section>
 
       {!isLoading && progress && (
-        <section style={{ marginTop: 8 }} aria-labelledby="snapshot-title">
+        <section className="ez-stats-section ez-overview-snapshot" aria-labelledby="snapshot-title">
           <h2 id="snapshot-title" className="ez-section-title">
-            Numbers snapshot
+            Snapshot
           </h2>
-          <p style={{ margin: '-8px 0 20px', fontSize: 14, color: 'var(--text-muted)', maxWidth: 560 }}>
-            Read-only totals—links to practice live under Explore, not repeated here.
-          </p>
+          <p className="ez-explore-lead ez-overview-snapshot__lead">Totals from your latest practice and learning sessions.</p>
           <div className="ez-stat-board">
             <div className="ez-stat-board__item">
-              <div className="ez-stat-board__value" style={{ color: '#1565c0' }}>
-                {progress.challenges_completed}
-              </div>
+              <div className="ez-stat-board__value">{progress.challenges_completed}</div>
               <div className="ez-stat-board__label">Challenges completed</div>
             </div>
             <div className="ez-stat-board__item">
-              <div className="ez-stat-board__value" style={{ color: '#6a1b9a' }}>
-                {progress.questions_answered}
-              </div>
+              <div className="ez-stat-board__value">{progress.questions_answered}</div>
               <div className="ez-stat-board__label">Questions answered</div>
             </div>
             <div className="ez-stat-board__item">
-              <div className="ez-stat-board__value" style={{ color: '#0d7a4f' }}>
-                {progress.total_time_minutes}
-              </div>
+              <div className="ez-stat-board__value">{progress.total_time_minutes}</div>
               <div className="ez-stat-board__label">Minutes practiced</div>
             </div>
           </div>

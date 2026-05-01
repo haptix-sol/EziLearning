@@ -16,19 +16,28 @@ export interface Challenge {
   starter_code: string | null;
   test_cases: { input: string; expected_output: string; is_hidden: boolean }[];
   required_skills: string[];
+  /** Topic slugs: arrays, linked-list, streams, … */
+  topics?: string[];
   time_limit_seconds: number;
   created_at: string;
-  animation_url?: string | null;  // Varin prerender when topic matches
+  /** Optional prerendered explainer under `/animations/` when the topic matches. */
+  animation_url?: string | null;
 }
 
+/** Quiz/list payload — reference answers are server-only. */
 export interface Question {
   id: string;
   question_text: string;
-  answer_text: string | null;
   skill_name: string;
   difficulty: string | null;
   category: string | null;
   created_at: string;
+}
+
+export interface QuestionAnswerResult {
+  message: string;
+  verdict: 'correct' | 'partial' | 'needs_improvement';
+  feedback: string;
 }
 
 export interface Execution {
@@ -39,6 +48,21 @@ export interface Execution {
   test_results: { passed: boolean; input?: string; expected?: string; actual?: string }[] | null;
   execution_time_ms: number | null;
   created_at: string;
+}
+
+export type AnneHintStyle = 'light' | 'stuck' | 'debug';
+
+export interface AnneHintRequestBody {
+  student_message?: string | null;
+  hint_style?: AnneHintStyle;
+  code_excerpt?: string | null;
+  stderr_excerpt?: string | null;
+  test_failure_summary?: string | null;
+}
+
+export interface AnneHintResponseBody {
+  reply: string;
+  fallback?: boolean;
 }
 
 export interface Progress {
@@ -82,27 +106,12 @@ export interface StudyPlan {
   completed_days: number;
 }
 
-export interface TopicVideoStatus {
-  topic: string;
-  video_id: string | null;
-  status: 'completed' | 'generating' | 'failed' | 'none';
-  url: string | null;
-  captions_url?: string | null;
-  progress_percent: number;
-  status_message?: string | null;
-  segments_done?: number | null;
-  segments_total?: number | null;
-  is_static?: boolean;
-  estimated_seconds_remaining?: number | null;
-}
-
 export interface DayPlan {
   id: string;
   day_number: number;
   title: string;
   topics: string[];
   subtopics?: Record<string, string[]>;
-  topic_videos?: TopicVideoStatus[];
   notes: string | null;
   duration_minutes: number;
   activity_type: string;
@@ -110,6 +119,11 @@ export interface DayPlan {
   is_completed: boolean;
   xp_earned: number | null;
   challenge_id?: string | null;
+  /** Visual explainer progress keyed by `topicSlug(topic)` */
+  visual_lesson_progress?: Record<
+    string,
+    { completed: boolean; last_slide_index: number; has_generated?: boolean }
+  > | null;
 }
 
 export interface McqOption {
@@ -165,4 +179,44 @@ export interface JobApplication {
   portal_password_masked?: boolean;
   last_synced_at?: string | null;
   created_at: string;
+}
+
+/** Competitive programming portfolio (external accounts + public page). */
+export type CpPlatformSlug =
+  | 'leetcode'
+  | 'codeforces'
+  | 'geeksforgeeks'
+  | 'codechef'
+  | 'atcoder'
+  | 'github';
+
+export interface CpPortfolioSettings {
+  public_slug: string | null;
+  public_enabled: boolean;
+  headline: string | null;
+}
+
+export interface CpPlatformConnection {
+  id: string;
+  platform: string;
+  handle: string;
+  verification_status: string;
+  verified_at: string | null;
+  last_sync_at: string | null;
+  last_sync_error: string | null;
+  stats_json: Record<string, unknown> | null;
+  verify_phrase?: string | null;
+}
+
+export interface CpUnifiedPrivate {
+  settings: CpPortfolioSettings;
+  connections: CpPlatformConnection[];
+  display_name: string | null;
+}
+
+export interface CpUnifiedPublic {
+  slug: string;
+  headline: string | null;
+  display_name: string | null;
+  platforms: { platform: string; handle: string; stats: Record<string, unknown> | null }[];
 }

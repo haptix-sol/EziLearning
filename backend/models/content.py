@@ -21,6 +21,8 @@ class Challenge(Base):
     solution_code: Mapped[str | None] = mapped_column(Text, nullable=True)
     test_cases: Mapped[list] = mapped_column(JSON, nullable=False, default=list)  # [{input, expected_output, is_hidden}]
     required_skills: Mapped[list | None] = mapped_column(JSON, nullable=True)  # ["Python", "Algorithms"]
+    # Topic slugs for browse/filter: arrays, linked-list, streams, … (see core/challenge_topics.py)
+    topics: Mapped[list | None] = mapped_column(JSON, nullable=True)
     time_limit_seconds: Mapped[int] = mapped_column(Integer, default=30)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
 

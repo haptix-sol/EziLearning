@@ -2,23 +2,57 @@
 import html as html_module
 import re
 from datetime import date, datetime, timezone
-from io import BytesIO
 
 import markdown
-from fastapi import APIRouter, Depends, BackgroundTasks
-from fastapi.responses import HTMLResponse, Response
+from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from xhtml2pdf import pisa
 
 from api.dependencies import CurrentUser, get_db
 from core.animations import match_animation
 from core.exceptions import NotFoundError, ValidationError
-from models import GeneratedVideo, StudyPlan, DayPlan, DayPlanCompletion, UserLevel, UserGoal, TrendingRole, DayMcq, UserMcqAnswer
+from models import (
+    StudyPlan,
+    DayPlan,
+    DayPlanCompletion,
+    UserLevel,
+    UserGoal,
+    TrendingRole,
+    DayMcq,
+    UserMcqAnswer,
+    VisualLessonTopicProgress,
+)
+from schemas.visual_lesson import DayVisualTopicState, VisualLessonProgressIn, VisualLessonProgressOut
 from services.study_generator import create_study_plan, generate_notes_for_topic
-from services.video_generator import generate_video_for_topic
+from services.llm_client import llm_service
+from services.visual_lesson_catalog import all_topic_keys_for_day, topic_key
+from services.visual_lesson_generator import generate_visual_manifest_with_llm, manifest_for_day_topic
 
 router = APIRouter(prefix="/study", tags=["study"])
+
+
+def _subtopics_for_day_topic(day: DayPlan, topic: str) -> list[str]:
+    st = getattr(day, "subtopics", None) or {}
+    if not isinstance(st, dict):
+        return []
+    v = st.get(topic)
+    if v:
+        return [str(x).strip() for x in v if str(x).strip()]
+    tl = topic.strip().lower()
+    for k, val in st.items():
+        if isinstance(k, str) and k.strip().lower() == tl:
+            return [str(x).strip() for x in (val or []) if str(x).strip()]
+    return []
+
+
+def _sanitize_notes_html(html_body: str) -> str:
+    html_body = re.sub(r"(?is)<script\b[^>]*>.*?</script>", "", html_body)
+    html_body = re.sub(r"(?is)<style\b[^>]*>.*?</style>", "", html_body)
+    for tag in ("iframe", "object", "embed"):
+        html_body = re.sub(rf"(?is)<{tag}\b[^>]*>.*?</{tag}>", "", html_body)
+        html_body = re.sub(rf"(?is)<{tag}\b[^>]*/>", "", html_body)
+    return html_body
 
 
 # Plan duration options - returned by API (no static data in frontend)
@@ -34,27 +68,12 @@ class CreatePlanRequest(BaseModel):
     focus_area: str | None = None
 
 
-class TopicVideoStatus(BaseModel):
-    topic: str
-    video_id: str | None
-    status: str  # completed, generating, failed, none
-    url: str | None
-    captions_url: str | None = None  # SRT for TTS/audio generation
-    progress_percent: int
-    status_message: str | None = None  # e.g. "Segments 3/25", "Generating audio"
-    segments_done: int | None = None
-    segments_total: int | None = None
-    is_static: bool = False
-    estimated_seconds_remaining: int | None = None  # Only when status=generating
-
-
 class DayPlanResponse(BaseModel):
     id: str
     day_number: int
     title: str
     topics: list[str] | None
     subtopics: dict[str, list[str]] | None = None  # {"Topic": ["Sub1", "Sub2"]}
-    topic_videos: list[TopicVideoStatus] | None = None  # per-topic video status
     notes: str | None
     duration_minutes: int
     activity_type: str
@@ -62,6 +81,7 @@ class DayPlanResponse(BaseModel):
     is_completed: bool
     xp_earned: int | None
     challenge_id: str | None = None  # coding required when set
+    visual_lesson_progress: dict[str, DayVisualTopicState] | None = None
 
 
 class StudyPlanResponse(BaseModel):
@@ -80,6 +100,17 @@ class LevelResponse(BaseModel):
     xp_to_next_level: int
     progress_percent: float
     streak_days: int
+
+
+class NotesBuildResponse(BaseModel):
+    day_id: str
+    cached: bool
+
+
+class NotesRenderedResponse(BaseModel):
+    title: str
+    html: str
+    animation_url: str | None = None
 
 
 @router.get("/plan-options")
@@ -153,30 +184,6 @@ def list_plans(current_user: CurrentUser, db: Session = Depends(get_db)):
     return result
 
 
-def _topic_slug(t: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "-", t.lower()).strip("-") or ""
-
-
-def _get_video_for_topic(db: Session, user_id: str, topic: str) -> GeneratedVideo | None:
-    """Find best-matching GeneratedVideo for a topic (by topic or topic_slug)."""
-    slug = _topic_slug(topic)
-    candidates = (
-        db.query(GeneratedVideo)
-        .filter(GeneratedVideo.user_id == user_id)
-        .order_by(GeneratedVideo.created_at.desc())
-        .limit(20)
-        .all()
-    )
-    for v in candidates:
-        if v.topic and v.topic.lower().strip() == topic.lower().strip():
-            return v
-        if v.topic_slug and v.topic_slug == slug:
-            return v
-        if v.topic and topic.lower() in v.topic.lower():
-            return v
-    return None
-
-
 @router.get("/goals/{goal_id}/roadmap")
 def get_goal_roadmap(
     goal_id: str,
@@ -226,7 +233,7 @@ def get_plan_days(
     current_user: CurrentUser,
     db: Session = Depends(get_db),
 ):
-    """Get day-by-day roadmap for a plan with per-topic video status."""
+    """Get day-by-day roadmap for a plan."""
     plan = db.query(StudyPlan).filter(StudyPlan.id == plan_id, StudyPlan.user_id == current_user.id).first()
     if not plan:
         raise NotFoundError("Plan not found")
@@ -239,63 +246,28 @@ def get_plan_days(
     completed_ids = {c.day_plan_id for c in completed_list}
     completions = {c.day_plan_id: c for c in completed_list}
 
+    prog_by_day: dict[str, dict[str, DayVisualTopicState]] = {}
+    if day_ids:
+        prog_rows = db.query(VisualLessonTopicProgress).filter(
+            VisualLessonTopicProgress.user_id == current_user.id,
+            VisualLessonTopicProgress.day_plan_id.in_(day_ids),
+        ).all()
+        for pr in prog_rows:
+            prog_by_day.setdefault(pr.day_plan_id, {})[pr.topic_key] = DayVisualTopicState(
+                completed=bool(pr.completed),
+                last_slide_index=int(pr.last_slide_index or 0),
+                has_generated=bool(getattr(pr, "generated_manifest", None)),
+            )
+
     result = []
     for d in days:
         topics = d.topics or []
-        topic_videos = []
-        for t in topics:
-            static_file = match_animation([t], d.title)
-            if static_file:
-                topic_videos.append(TopicVideoStatus(
-                    topic=t,
-                    video_id=f"static-{static_file}",
-                    status="completed",
-                    url=f"/animations/{static_file}",
-                    progress_percent=100,
-                    is_static=True,
-                ))
-            else:
-                try:
-                    v = _get_video_for_topic(db, current_user.id, t)
-                except Exception:
-                    v = None
-                if v:
-                    pct = v.progress_percent or 0
-                    if v.status == "generating" and (sd := getattr(v, "segments_done", None)) is not None and (st := getattr(v, "segments_total", None)) and st > 0:
-                        pct = min(90, 15 + (sd * 70 // st))
-                    est_sec = None
-                    if v.status == "generating" and pct < 100:
-                        est_sec = max(60, int((100 - pct) / 100 * 600))  # ~10 min total estimate
-                    topic_videos.append(TopicVideoStatus(
-                        topic=t,
-                        video_id=v.id,
-                        status=v.status,
-                        url=f"/videos/file/{v.id}" if v.status == "completed" and v.file_path else None,
-                        captions_url=f"/videos/captions/{v.id}" if v.status == "completed" and v.caption_file_path else None,
-                        progress_percent=pct,
-                        status_message=getattr(v, "status_message", None),
-                        segments_done=getattr(v, "segments_done", None),
-                        segments_total=getattr(v, "segments_total", None),
-                        is_static=False,
-                        estimated_seconds_remaining=est_sec,
-                    ))
-                else:
-                    topic_videos.append(TopicVideoStatus(
-                        topic=t,
-                        video_id=None,
-                        status="none",
-                        url=None,
-                        captions_url=None,
-                        progress_percent=0,
-                        is_static=False,
-                    ))
         result.append(DayPlanResponse(
             id=d.id,
             day_number=d.day_number,
             title=d.title,
             topics=topics,
             subtopics=getattr(d, 'subtopics', None) or {},
-            topic_videos=topic_videos,
             notes=d.notes,
             duration_minutes=d.duration_minutes,
             activity_type=d.activity_type,
@@ -303,44 +275,19 @@ def get_plan_days(
             is_completed=d.id in completed_ids,
             xp_earned=completions[d.id].xp_earned if d.id in completions else None,
             challenge_id=d.challenge_id,
+            visual_lesson_progress=prog_by_day.get(d.id),
         ))
     return result
 
 
-class GenerateVideoForTopicRequest(BaseModel):
-    topic: str
-    video_style: str = "explanatory"  # short, explanatory, pictorial, parallel
-
-
-@router.get("/video-style-options")
-def get_video_style_options():
-    """Get available video generation styles, sorted by video length (low to high)."""
-    from services.video_generator import VIDEO_STYLES
-    options = [
-        {
-            "id": k,
-            "label": v["label"],
-            "desc": v["desc"],
-            "video_length_min": v["total_sec"][0] // 60,
-            "video_length_max": v["total_sec"][1] // 60,
-            "est_generation_min": v.get("est_generation_min", v["total_sec"][0] // 30),
-            "est_generation_max": v.get("est_generation_max", v["total_sec"][1] // 20),
-        }
-        for k, v in VIDEO_STYLES.items()
-    ]
-    options.sort(key=lambda x: (x["video_length_min"] + x["video_length_max"]) / 2)
-    return options
-
-
-@router.post("/days/{day_id}/generate-video")
-def trigger_video_generation(
+@router.get("/days/{day_id}/visual-lesson")
+def get_visual_lesson_manifest(
     day_id: str,
-    data: GenerateVideoForTopicRequest,
-    background_tasks: BackgroundTasks,
+    topic: str,
     current_user: CurrentUser,
     db: Session = Depends(get_db),
 ):
-    """Trigger video generation for a topic. Only allowed for topics in this study plan day."""
+    """Structured manifest for Daily Lesson Visual Explainer (topic must belong to the day)."""
     day = db.query(DayPlan).join(StudyPlan).filter(
         DayPlan.id == day_id,
         StudyPlan.user_id == current_user.id,
@@ -348,89 +295,168 @@ def trigger_video_generation(
     if not day:
         raise NotFoundError("Day not found")
     topics = day.topics or []
-    topic_stripped = (data.topic or "").strip()
-    if not topic_stripped:
-        raise ValidationError("Topic required")
-    matched = next((t for t in topics if t and t.strip().lower() == topic_stripped.lower()), None)
-    if not matched:
-        raise ValidationError("Topic must be one of the day's topics")
-    topic = matched.strip()
-
-    # Check for pre-rendered static animation
-    static_file = match_animation([topic], day.title)
-    if static_file:
-        return {
-            "id": f"static-{static_file}",
-            "topic": topic,
-            "status": "completed",
-            "progress_percent": 100,
-            "url": f"/animations/{static_file}",
-            "is_static": True,
-        }
-
-    # Check if already generating or completed
-    existing = _get_video_for_topic(db, current_user.id, topic)
-    if existing and existing.status == "failed":
-        from services.video_generator import cleanup_video_residue
-        cleanup_video_residue(existing.id, str(current_user.id), existing.topic)
-        db.delete(existing)
-        db.commit()
-        existing = None
-
-    if existing:
-        if existing.status == "generating":
-            pct = existing.progress_percent or 0
-            est_sec = max(60, int((100 - pct) / 100 * 600)) if pct < 100 else None
-            return {
-                "id": existing.id,
-                "topic": topic,
-                "status": "generating",
-                "progress_percent": pct,
-                "url": None,
-                "is_static": False,
-                "status_message": getattr(existing, "status_message", None) or "Rendering with Varin…",
-                "estimated_seconds_remaining": est_sec,
-            }
-        if existing.status == "completed" and existing.file_path:
-            return {
-                "id": existing.id,
-                "topic": topic,
-                "status": "completed",
-                "progress_percent": 100,
-                "url": f"/videos/file/{existing.id}",
-                "is_static": False,
-            }
-
-    # Create new generation
-    v = GeneratedVideo(
-        user_id=current_user.id,
-        topic=topic,
-        topic_slug=_topic_slug(topic),
-        file_path=None,
-        status="generating",
-        progress_percent=0,
+    if topic not in topics:
+        raise ValidationError("Topic is not part of this day")
+    subs = _subtopics_for_day_topic(day, topic)
+    tk = topic_key(topic)
+    row = (
+        db.query(VisualLessonTopicProgress)
+        .filter(
+            VisualLessonTopicProgress.user_id == current_user.id,
+            VisualLessonTopicProgress.day_plan_id == day_id,
+            VisualLessonTopicProgress.topic_key == tk,
+        )
+        .first()
     )
-    db.add(v)
+    stored = getattr(row, "generated_manifest", None) if row else None
+    return manifest_for_day_topic(
+        day_id=day.id,
+        day_number=day.day_number,
+        day_title=day.title,
+        activity_type=day.activity_type or "study",
+        topic=topic,
+        subtopics=subs,
+        stored=stored if isinstance(stored, dict) else None,
+    )
+
+
+@router.post("/days/{day_id}/visual-lesson/build")
+def build_visual_lesson_for_topic(
+    day_id: str,
+    current_user: CurrentUser,
+    db: Session = Depends(get_db),
+    topic: str = Query(..., min_length=1),
+    regenerate: bool = Query(False),
+):
+    """Generate (LLM) and cache a guided visual lesson for this day topic, then return the manifest."""
+    day = db.query(DayPlan).join(StudyPlan).filter(
+        DayPlan.id == day_id,
+        StudyPlan.user_id == current_user.id,
+    ).first()
+    if not day:
+        raise NotFoundError("Day not found")
+    topics = day.topics or []
+    if topic not in topics:
+        raise ValidationError("Topic is not part of this day")
+    subs = _subtopics_for_day_topic(day, topic)
+    tk = topic_key(topic)
+    row = (
+        db.query(VisualLessonTopicProgress)
+        .filter(
+            VisualLessonTopicProgress.user_id == current_user.id,
+            VisualLessonTopicProgress.day_plan_id == day_id,
+            VisualLessonTopicProgress.topic_key == tk,
+        )
+        .first()
+    )
+    if not row:
+        row = VisualLessonTopicProgress(
+            user_id=current_user.id,
+            day_plan_id=day_id,
+            topic_key=tk,
+            last_slide_index=0,
+            completed=False,
+            viewed_slide_ids=[],
+        )
+        db.add(row)
+        db.flush()
+
+    if row.generated_manifest and isinstance(row.generated_manifest, dict) and not regenerate:
+        db.commit()
+        return manifest_for_day_topic(
+            day_id=day.id,
+            day_number=day.day_number,
+            day_title=day.title,
+            activity_type=day.activity_type or "study",
+            topic=topic,
+            subtopics=subs,
+            stored=row.generated_manifest,
+        )
+
+    gen = generate_visual_manifest_with_llm(
+        day_id=day.id,
+        day_number=day.day_number,
+        day_title=day.title,
+        activity_type=day.activity_type or "study",
+        topic=topic,
+        subtopics=subs,
+    )
+    if not gen:
+        detail = llm_service.last_failure_reason or "Could not generate a guided lesson. Check LLM configuration."
+        raise HTTPException(status_code=503, detail=detail)
+    row.generated_manifest = gen
     db.commit()
-    db.refresh(v)
-    from services.video_generator import VIDEO_STYLES
-    style = data.video_style if data.video_style in ("short", "explanatory", "pictorial", "parallel") else "explanatory"
-    background_tasks.add_task(generate_video_for_topic, v.id, topic, current_user.id, style)
-    cfg = VIDEO_STYLES.get(style, VIDEO_STYLES["explanatory"])
-    gmin = int(cfg.get("est_generation_min", 5))
-    gmax = int(cfg.get("est_generation_max", 15))
-    # ETA for the job (render + audio), not final video runtime
-    est_sec = max(120, ((gmin + gmax) // 2) * 60)
-    return {
-        "id": v.id,
-        "topic": topic,
-        "status": "generating",
-        "progress_percent": 0,
-        "url": None,
-        "is_static": False,
-        "status_message": "Queued — Varin pipeline starting…",
-        "estimated_seconds_remaining": est_sec,
-    }
+    return gen
+
+
+@router.post("/days/{day_id}/visual-lesson/progress", response_model=VisualLessonProgressOut)
+def post_visual_lesson_progress(
+    day_id: str,
+    data: VisualLessonProgressIn,
+    current_user: CurrentUser,
+    db: Session = Depends(get_db),
+):
+    """Track slide progress; first completion per topic awards small XP."""
+    day = db.query(DayPlan).join(StudyPlan).filter(
+        DayPlan.id == day_id,
+        StudyPlan.user_id == current_user.id,
+    ).first()
+    if not day:
+        raise NotFoundError("Day not found")
+    topic_keys = set(all_topic_keys_for_day(day.topics))
+    tk = data.topic_key.strip()
+    if tk not in topic_keys:
+        raise ValidationError("Unknown topic key for this day")
+
+    row = db.query(VisualLessonTopicProgress).filter(
+        VisualLessonTopicProgress.user_id == current_user.id,
+        VisualLessonTopicProgress.day_plan_id == day_id,
+        VisualLessonTopicProgress.topic_key == tk,
+    ).first()
+    was_completed = bool(row.completed) if row else False
+    if not row:
+        row = VisualLessonTopicProgress(
+            user_id=current_user.id,
+            day_plan_id=day_id,
+            topic_key=tk,
+            last_slide_index=0,
+            completed=False,
+            viewed_slide_ids=[],
+        )
+        db.add(row)
+    row.last_slide_index = max(int(row.last_slide_index or 0), int(data.last_slide_index))
+    if data.viewed_slide_ids:
+        prev = list(row.viewed_slide_ids or [])
+        seen = set(prev)
+        for sid in data.viewed_slide_ids:
+            if sid and sid not in seen:
+                prev.append(sid)
+                seen.add(sid)
+        row.viewed_slide_ids = prev
+
+    xp_awarded = 0
+    if data.completed_lesson and not was_completed:
+        row.completed = True
+        ul = db.query(UserLevel).filter(UserLevel.user_id == current_user.id).first()
+        if not ul:
+            ul = UserLevel(user_id=current_user.id)
+            db.add(ul)
+            db.flush()
+        ul.xp += 3
+        ul.updated_at = datetime.now(timezone.utc)
+        while ul.xp >= ul.xp_to_next_level:
+            ul.xp -= ul.xp_to_next_level
+            ul.level += 1
+            ul.xp_to_next_level = int(ul.xp_to_next_level * 1.5)
+        xp_awarded = 3
+
+    db.commit()
+    return VisualLessonProgressOut(
+        topic_key=tk,
+        last_slide_index=row.last_slide_index,
+        completed=bool(row.completed),
+        xp_awarded=xp_awarded,
+    )
 
 
 class McqOptionResponse(BaseModel):
@@ -588,7 +614,7 @@ def get_day_notes(day_id: str, current_user: CurrentUser, db: Session = Depends(
     topics = day.topics or ["General study"]
     notes_parts = []
     for t in topics:
-        notes_parts.append(generate_notes_for_topic(t, day.title))
+        notes_parts.append(generate_notes_for_topic(t, day.title, _subtopics_for_day_topic(day, t)))
     full_notes = "\n\n---\n\n".join(notes_parts)
     day.notes = full_notes
     db.commit()
@@ -600,16 +626,32 @@ def _get_or_generate_notes(day: DayPlan, db: Session) -> str:
     if day.notes and day.notes.strip():
         return day.notes
     topics = day.topics or ["General study"]
-    notes_parts = [generate_notes_for_topic(t, day.title) for t in topics]
+    notes_parts = [
+        generate_notes_for_topic(t, day.title, _subtopics_for_day_topic(day, t)) for t in topics
+    ]
     full_notes = "\n\n---\n\n".join(notes_parts)
     day.notes = full_notes
     db.commit()
     return full_notes
 
 
-@router.get("/days/{day_id}/notes/view", response_class=HTMLResponse)
-def get_day_notes_view(day_id: str, current_user: CurrentUser, db: Session = Depends(get_db)):
-    """Open notes in new tab as formatted HTML. Disables right-click and text selection."""
+@router.post("/days/{day_id}/notes/build", response_model=NotesBuildResponse)
+def build_day_notes(day_id: str, current_user: CurrentUser, db: Session = Depends(get_db)):
+    """Generate and persist notes for a day (idempotent). Call before opening the in-app reader."""
+    day = db.query(DayPlan).join(StudyPlan).filter(
+        DayPlan.id == day_id,
+        StudyPlan.user_id == current_user.id,
+    ).first()
+    if not day:
+        raise NotFoundError("Day not found")
+    cached = bool(day.notes and day.notes.strip())
+    _get_or_generate_notes(day, db)
+    return NotesBuildResponse(day_id=day_id, cached=cached)
+
+
+@router.get("/days/{day_id}/notes/rendered", response_model=NotesRenderedResponse)
+def get_day_notes_rendered(day_id: str, current_user: CurrentUser, db: Session = Depends(get_db)):
+    """Sanitized HTML for the in-app notes reader (JSON)."""
     day = db.query(DayPlan).join(StudyPlan).filter(
         DayPlan.id == day_id,
         StudyPlan.user_id == current_user.id,
@@ -618,83 +660,46 @@ def get_day_notes_view(day_id: str, current_user: CurrentUser, db: Session = Dep
         raise NotFoundError("Day not found")
     notes = _get_or_generate_notes(day, db)
     html_body = markdown.markdown(notes, extensions=["extra", "nl2br"])
-    title_esc = html_module.escape(day.title)
+    html_body = _sanitize_notes_html(html_body)
     animation_filename = match_animation(day.topics, day.title)
-    animation_block = ""
-    if animation_filename:
-        # Use request base_url for correct origin when behind proxy
-        anim_path = f"/animations/{animation_filename}"
-        animation_block = f"""
-  <div class="animation-block" style="margin-bottom: 28px; padding: 16px; background: #f6f8fa; border-radius: 8px; border: 1px solid #e1e4e8;">
-    <h3 style="margin: 0 0 12px; font-size: 14px; color: #58a6ff;">Animated explanation</h3>
-    <video controls width="100%" style="max-width: 640px; border-radius: 6px;">
-      <source src="{anim_path}" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-  </div>"""
-    html_page = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="robots" content="noindex, nofollow">
-  <title>Notes - {title_esc}</title>
-  <style>
-    * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-    body {{ font-family: Georgia, serif; line-height: 1.6; color: #1a1a1a; background: #fff; padding: 40px 60px; max-width: 800px; margin: 0 auto; }}
-    h1 {{ font-size: 24px; margin-bottom: 24px; color: #0d1117; border-bottom: 2px solid #58a6ff; padding-bottom: 8px; }}
-    h2 {{ font-size: 20px; margin: 28px 0 12px; color: #161b22; }}
-    h3 {{ font-size: 16px; margin: 20px 0 8px; }}
-    p {{ margin-bottom: 12px; }}
-    ul, ol {{ margin: 12px 0 12px 24px; }}
-    li {{ margin-bottom: 6px; }}
-    code {{ background: #f0f6fc; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }}
-    pre {{ background: #f6f8fa; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; font-size: 14px; }}
-    pre code {{ background: none; padding: 0; }}
-    hr {{ margin: 24px 0; border: none; border-top: 1px solid #e1e4e8; }}
-    .no-select {{ user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }}
-  </style>
-</head>
-<body class="no-select" oncontextmenu="return false;">
-  <h1>{title_esc}</h1>{animation_block}
-  <div class="notes-content">{html_body}</div>
-</body>
-</html>"""
-    return HTMLResponse(html_page)
+    animation_url = f"/animations/{animation_filename}" if animation_filename else None
+    return NotesRenderedResponse(title=day.title, html=html_body, animation_url=animation_url)
+
+
+@router.get("/days/{day_id}/notes/view", response_class=HTMLResponse)
+def get_day_notes_view(day_id: str, current_user: CurrentUser, db: Session = Depends(get_db)):
+    """Legacy URL: notes are only shown inside the app reader."""
+    day = db.query(DayPlan).join(StudyPlan).filter(
+        DayPlan.id == day_id,
+        StudyPlan.user_id == current_user.id,
+    ).first()
+    if not day:
+        raise NotFoundError("Day not found")
+    title_esc = html_module.escape(day.title)
+    return HTMLResponse(
+        f"""<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>Notes</title></head>
+<body style="font-family:system-ui,sans-serif;padding:2rem;max-width:36rem">
+  <p>Open this day from <strong>Study → Open notes</strong> in the app to read notes in the secure reader.</p>
+  <p style="color:#666;font-size:14px">Day: {title_esc}</p>
+</body></html>"""
+    )
 
 
 @router.get("/days/{day_id}/notes.pdf")
 def get_day_notes_pdf(day_id: str, current_user: CurrentUser, db: Session = Depends(get_db)):
-    """Download notes as PDF. Opens in new tab when used as link target."""
-    day = db.query(DayPlan).join(StudyPlan).filter(
-        DayPlan.id == day_id,
-        StudyPlan.user_id == current_user.id,
-    ).first()
-    if not day:
+    """Direct PDF download is disabled; use the in-app study reader."""
+    exists = (
+        db.query(DayPlan.id)
+        .join(StudyPlan)
+        .filter(DayPlan.id == day_id, StudyPlan.user_id == current_user.id)
+        .first()
+    )
+    if not exists:
         raise NotFoundError("Day not found")
-    notes = _get_or_generate_notes(day, db)
-    html_body = markdown.markdown(notes, extensions=["extra", "nl2br"])
-    title_esc = html_module.escape(day.title)
-    html_content = f"""<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><style>
-body{{font-family:DejaVu Sans,sans-serif;font-size:11px;line-height:1.5;color:#1a1a1a;padding:20px}}
-h1{{font-size:18px;margin-bottom:16px;border-bottom:1px solid #333;padding-bottom:6px}}
-h2{{font-size:14px;margin:16px 0 8px}}
-h3{{font-size:12px;margin:12px 0 6px}}
-p{{margin-bottom:8px}}
-ul,ol{{margin:8px 0 8px 20px}}
-code{{background:#f0f0f0;padding:1px 4px}}
-pre{{background:#f5f5f5;padding:12px;overflow-x:auto;font-size:10px}}
-</style></head><body><h1>{title_esc}</h1><div>{html_body}</div></body></html>"""
-    buffer = BytesIO()
-    pisa_status = pisa.CreatePDF(html_content, dest=buffer, encoding="utf-8")
-    if pisa_status.err:
-        raise ValidationError("Failed to generate PDF")
-    buffer.seek(0)
-    filename = f"notes-{day.title.replace(' ', '-')[:30]}.pdf"
-    return Response(
-        content=buffer.getvalue(),
-        media_type="application/pdf",
-        headers={"Content-Disposition": f'inline; filename="{filename}"'},
+    raise HTTPException(
+        status_code=403,
+        detail="Notes are only available in the app study reader.",
     )
 
 
@@ -718,6 +723,19 @@ def complete_day(
     if existing:
         return {"message": "Already completed", "xp": existing.xp_earned}
     xp = 10 + (day.level * 5)
+    topic_keys = all_topic_keys_for_day(day.topics)
+    bonus = 0
+    if topic_keys:
+        done = db.query(VisualLessonTopicProgress).filter(
+            VisualLessonTopicProgress.user_id == current_user.id,
+            VisualLessonTopicProgress.day_plan_id == day_id,
+            VisualLessonTopicProgress.topic_key.in_(topic_keys),
+            VisualLessonTopicProgress.completed.is_(True),
+        ).count()
+        if done >= len(topic_keys):
+            bonus = 5
+            xp += bonus
+
     completion = DayPlanCompletion(user_id=current_user.id, day_plan_id=day_id, xp_earned=xp)
     db.add(completion)
     # Update user level
@@ -745,7 +763,7 @@ def complete_day(
         ul.level += 1
         ul.xp_to_next_level = int(ul.xp_to_next_level * 1.5)
     db.commit()
-    return {"message": "Completed", "xp": xp, "level": ul.level}
+    return {"message": "Completed", "xp": xp, "level": ul.level, "visual_bonus_xp": bonus}
 
 
 @router.get("/level", response_model=LevelResponse)

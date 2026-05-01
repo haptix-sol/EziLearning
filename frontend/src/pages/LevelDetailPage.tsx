@@ -1,6 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Check, HelpCircle, Laptop, Sparkles } from 'lucide-react';
 import { api } from '../lib/api';
+import { PageHeader } from '../components/ui/PageHeader';
+import { SkeletonLine, SkeletonLineLg } from '../components/ui/Skeleton';
 
 interface LevelContent {
   level_number: number;
@@ -40,7 +43,7 @@ export function LevelDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['level-map'] });
       queryClient.invalidateQueries({ queryKey: ['level-content', level] });
       queryClient.invalidateQueries({ queryKey: ['level'] });
-      navigate('/levels');
+      navigate('/growth?focus=levels');
     },
     onError: (err: { response?: { data?: { detail?: string } } }) => {
       alert(err?.response?.data?.detail || 'Complete all tasks first.');
@@ -49,8 +52,14 @@ export function LevelDetailPage() {
 
   if (isLoading || !content) {
     return (
-      <div className="animate-fade-in" style={{ padding: 48, color: 'var(--text-secondary)' }}>
-        Loading level {level}... Generating personalized content from your resume.
+      <div className="animate-fade-in ez-page-zone" style={{ maxWidth: 840, margin: '0 auto' }} aria-busy="true">
+        <PageHeader
+          title={`Level ${level}`}
+          description="Loading personalized challenges and questions from your profile…"
+        />
+        <SkeletonLineLg />
+        <SkeletonLine />
+        <SkeletonLine />
       </div>
     );
   }
@@ -58,28 +67,22 @@ export function LevelDetailPage() {
   const { challenges, questions, all_complete } = content;
 
   return (
-    <div className="animate-fade-in" style={{ maxWidth: 840, margin: '0 auto' }}>
-      <div style={{ marginBottom: 28, display: 'flex', alignItems: 'center', gap: 20 }}>
-        <Link
-          to="/levels"
-          className="btn btn-ghost"
-          style={{ textDecoration: 'none' }}
-        >
-          ← Map
-        </Link>
-        <h1 style={{ color: 'var(--text-primary)', margin: 0, fontSize: 26, fontWeight: 700 }}>
-          Level {level}
-        </h1>
-      </div>
-
-      <p style={{ color: 'var(--text-secondary)', marginBottom: 36, fontSize: 15 }}>
-        Complete the coding challenge and answer the questions to unlock the next level.
-      </p>
+    <div className="animate-fade-in ez-page-zone" style={{ maxWidth: 840, margin: '0 auto' }}>
+      <PageHeader
+        title={`Level ${level}`}
+        description="Finish the coding task and interview questions here, then mark the level complete to advance on the map."
+        actions={
+          <Link to="/growth?focus=levels" className="btn btn-ghost btn-sm">
+            ← Growth hub
+          </Link>
+        }
+      />
 
       {challenges.length > 0 && (
         <div style={{ marginBottom: 36 }}>
-          <h2 style={{ color: 'var(--text-primary)', marginBottom: 20, fontSize: 20, fontWeight: 600 }}>
-            💻 Coding Challenge
+          <h2 style={{ color: 'var(--text-primary)', marginBottom: 20, fontSize: 20, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Laptop size={22} strokeWidth={1.75} aria-hidden />
+            Coding challenge
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {challenges.map((c) => (
@@ -96,7 +99,11 @@ export function LevelDetailPage() {
                   <div>
                     <h3 style={{ color: 'var(--text-primary)', margin: '0 0 8px', fontSize: 17, fontWeight: 600 }}>
                       {c.title}
-                      {c.completed && <span style={{ marginLeft: 10, color: 'var(--success)' }}>✓</span>}
+                      {c.completed && (
+                        <span style={{ marginLeft: 10, color: 'var(--success)', display: 'inline-flex', verticalAlign: 'middle' }}>
+                          <Check size={18} strokeWidth={2.5} aria-label="Completed" />
+                        </span>
+                      )}
                     </h3>
                     <span
                       style={{
@@ -132,8 +139,9 @@ export function LevelDetailPage() {
 
       {questions.length > 0 && (
         <div style={{ marginBottom: 36 }}>
-          <h2 style={{ color: 'var(--text-primary)', marginBottom: 20, fontSize: 20, fontWeight: 600 }}>
-            ❓ Questions
+          <h2 style={{ color: 'var(--text-primary)', marginBottom: 20, fontSize: 20, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <HelpCircle size={22} strokeWidth={1.75} aria-hidden />
+            Questions
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {questions.map((q) => (
@@ -163,7 +171,9 @@ export function LevelDetailPage() {
                     </Link>
                   )}
                   {q.answered && (
-                    <span className="badge badge-success">✓ Answered</span>
+                    <span className="badge badge-success" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                      <Check size={12} strokeWidth={2.5} aria-hidden /> Answered
+                    </span>
                   )}
                 </div>
               </div>
@@ -184,7 +194,14 @@ export function LevelDetailPage() {
               fontWeight: 700,
             }}
           >
-            {completeMutation.isPending ? 'Completing...' : '🎉 Complete Level & Unlock Next'}
+            {completeMutation.isPending ? (
+              'Completing...'
+            ) : (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                <Sparkles size={18} strokeWidth={1.75} aria-hidden />
+                Complete level & unlock next
+              </span>
+            )}
           </button>
         ) : (
           <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: 15 }}>
