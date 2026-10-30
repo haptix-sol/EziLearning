@@ -60,6 +60,8 @@ const navGroups: NavGroup[] = [
 ];
 
 const TOPBAR_PILLS: { to: string; label: string }[] = [
+  { to: '/pitch', label: '📊 Pitch Deck' },
+  { to: '/showcase', label: '★ Demo Showcase' },
   { to: '/', label: 'Overview' },
   { to: '/study', label: 'Study' },
   { to: '/challenges', label: 'Coding' },
@@ -143,7 +145,7 @@ export function DashboardLayout() {
 
           <Link to="/" className="ez-brand ez-brand--sidebar ez-brand--lockup ez-brand--text">
             <span className="ez-brand__text">
-              <span className="ez-brand__name">EziLearnings</span>
+              <span className="ez-brand__name">EziLearning</span>
               <span className="ez-brand__tag ez-brand__tag--below">Workspace — learn, build, apply</span>
             </span>
           </Link>
@@ -286,7 +288,7 @@ export function DashboardLayout() {
 
           <footer className="ez-footer">
             <div className="ez-footer__inner">
-              <span>© {new Date().getFullYear()} EziLearnings — roadmap, resume, and applications in one workspace.</span>
+              <span>© {new Date().getFullYear()} EziLearning — roadmap, resume, and applications in one workspace.</span>
               <div className="ez-footer__links">
                 <Link to="/onboarding">Goal setup</Link>
                 <Link to="/resume">Resume</Link>
@@ -303,7 +305,7 @@ export function DashboardLayout() {
       <aside className={`ez-navsheet${mobileNavOpen ? ' ez-navsheet--open' : ''}`} aria-label="Mobile menu">
         <div className="ez-navsheet__head">
           <div className="ez-navsheet__brand">
-            <span className="ez-brand__name">EziLearnings</span>
+            <span className="ez-brand__name">EziLearning</span>
             <span className="ez-brand__tag ez-brand__tag--below">Menu</span>
           </div>
           <button

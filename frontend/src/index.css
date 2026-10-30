@@ -1,45 +1,45 @@
-/* ─── EziLearnings — matte paper, bookish serif headings, hollow vs filled controls ─── */
+/* ─── EziLearning — Superr warm schoolyard notebook aesthetic ─── */
 :root {
-  --font-display: 'Source Serif 4', 'Georgia', 'Times New Roman', serif;
+  --font-display: 'DM Serif Display', Georgia, 'Times New Roman', serif;
   --font-ui: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  /* Warm ink & paper */
-  --brand: #8b4518;
-  --brand-hover: #6d3612;
-  --brand-soft: #f2ebe2;
-  --brand-muted: rgba(139, 69, 24, 0.12);
+  /* Superr palette */
+  --brand: #ff6f1e;
+  --brand-hover: #ce500a;
+  --brand-soft: #f7efe9;
+  --brand-muted: rgba(255, 111, 30, 0.10);
 
-  --bg-base: #e8e2d8;
-  --bg-elevated: #f2ece4;
-  --bg-card: #faf6f0;
-  --bg-wash: #f5efe6;
-  --bg-hover: #ebe4d9;
-  --bg-active: #e0d8cc;
+  --bg-base: #fdfbf9;
+  --bg-elevated: #fdfbf9;
+  --bg-card: #fdfbf9;
+  --bg-wash: #f7efe9;
+  --bg-hover: #f7efe9;
+  --bg-active: #f0e6da;
 
-  --border: #c9bfb2;
-  --border-muted: #ddd4c8;
-  --border-strong: #a89888;
+  --border: rgba(23, 23, 23, 0.12);
+  --border-muted: rgba(23, 23, 23, 0.08);
+  --border-strong: #171717;
 
-  --text-primary: #1f1b16;
-  --text-secondary: #4a443c;
+  --text-primary: #2b1a07;
+  --text-secondary: #171717;
   --text-muted: #6b655c;
   --text-dim: #918a80;
 
-  --accent: #4a5a8c;
-  --accent-hover: #3d4b78;
-  --accent-muted: rgba(74, 90, 140, 0.12);
+  --accent: #ff6f1e;
+  --accent-hover: #ce500a;
+  --accent-muted: rgba(255, 111, 30, 0.10);
 
-  --success: #1d5c35;
-  --success-bg: #e4efe8;
-  --warning: #7a5a2e;
-  --warning-bg: #f5efe4;
-  --danger: #8b1f1f;
-  --danger-bg: #f8e9e9;
-  --info: #2c4a7c;
-  --purple: #5c3d7a;
-  --purple-bg: #ebe4f0;
+  --success: #22c55e;
+  --success-bg: #f0faf4;
+  --warning: #ff6f1e;
+  --warning-bg: #fef8f4;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --info: #3b82f6;
+  --purple: #a855f7;
+  --purple-bg: #faf5ff;
 
-  /* Flat “printed” surfaces — no glossy blends */
+  /* Flat matte surfaces */
   --gradient-accent: var(--bg-card);
   --gradient-brand-chip: var(--brand);
   --gradient-progress: var(--brand);
@@ -48,10 +48,10 @@
   --gradient-card: var(--bg-card);
   --gradient-glow: transparent;
 
-  --text-body: 0.875rem;
-  --text-lead: 0.9375rem;
-  --text-title: clamp(1.3125rem, 2.1vw, 1.5625rem);
-  --text-hero: clamp(1.5rem, 2.85vw, 1.875rem);
+  --text-body: 0.9375rem;
+  --text-lead: 1rem;
+  --text-title: clamp(1.5rem, 2.4vw, 1.75rem);
+  --text-hero: clamp(1.75rem, 3.2vw, 2.625rem);
 
   --space-1: 4px;
   --space-2: 8px;
@@ -65,15 +65,15 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --radius-xl: 22px;
+  --radius-xl: 20px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 1px 0 rgba(255, 255, 255, 0.45) inset;
-  --shadow-md: 0 1px 2px rgba(31, 27, 22, 0.06);
-  --shadow-lg: 0 2px 8px rgba(31, 27, 22, 0.07);
+  --shadow-sm: none;
+  --shadow-md: rgba(0, 0, 0, 0.06) 0px 2px 20px 0px;
+  --shadow-lg: rgba(0, 0, 0, 0.06) 0px 2px 20px 0px;
   --shadow-glow: none;
   --glass-bg: var(--bg-card);
-  --glass-bg-strong: var(--bg-elevated);
+  --glass-bg-strong: var(--bg-wash);
   --glass-border: var(--border);
   --glass-shadow: var(--shadow-md);
   --glass-blur: 0px;
@@ -84,27 +84,27 @@
   --duration-normal: 200ms;
   --duration-slow: 320ms;
 
-  --header-h: 46px;
+  --header-h: 52px;
   --subnav-h: 48px;
-  --layout-max: 1224px;
-  --workspace-sidebar-w: 168px;
-  --workspace-sidebar-collapsed-w: 48px;
-  --thita-border: rgba(31, 27, 22, 0.1);
-  --thita-topbar-bg: var(--bg-elevated);
-  --radius-pill: 9999px;
+  --layout-max: 1200px;
+  --workspace-sidebar-w: 180px;
+  --workspace-sidebar-collapsed-w: 52px;
+  --thita-border: rgba(23, 23, 23, 0.08);
+  --thita-topbar-bg: #fdfbf9;
+  --radius-pill: 20px;
   --topbar-blur: 0px;
 
   --surface-0: var(--bg-base);
-  --surface-1: var(--bg-elevated);
+  --surface-1: #f7efe9;
   --surface-2: var(--bg-card);
   --surface-inset: var(--bg-active);
   --focus-ring-color: var(--brand);
 
-  /* Hollow control: recessed paper well */
-  --btn-hollow-bg: rgba(255, 255, 255, 0.25);
-  --btn-hollow-border: var(--border-strong);
-  --btn-hollow-inset: inset 0 2px 5px rgba(31, 27, 22, 0.06);
-  --btn-filled-shadow: inset 0 -1px 0 rgba(31, 27, 22, 0.12);
+  /* Superr button: cream fill, dark border outline */
+  --btn-hollow-bg: #fdfbf9;
+  --btn-hollow-border: #171717;
+  --btn-hollow-inset: none;
+  --btn-filled-shadow: none;
 }
 
 * {
@@ -2378,15 +2378,16 @@ button:disabled {
 }
 
 .btn-primary {
-  background: var(--brand);
-  color: #fdfaf6;
-  border-color: #5a3310;
-  box-shadow: var(--btn-filled-shadow);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1.5px solid var(--border-strong);
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 1px 2px 0px;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--brand-hover);
-  border-color: #4a280c;
+  background: var(--bg-wash);
+  border-color: var(--brand);
+  color: var(--brand);
   transform: none;
 }
 
@@ -2644,12 +2645,7 @@ button:disabled {
 }
 
 .ez-explore-tile {
-  border-top: none !important;
-  border-left: 3px solid var(--brand);
-}
-
-.ez-explore-tile:hover {
-  border-left-color: var(--brand-hover);
+  border-radius: var(--radius-md);
 }
 
 .ez-momentum {

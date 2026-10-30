@@ -20,6 +20,8 @@ import { OnboardingPage } from './pages/OnboardingPage';
 import { DailyLessonVisualPage } from './pages/DailyLessonVisualPage';
 import { CpPortfolioPage } from './pages/CpPortfolioPage';
 import { PublicCpPortfolioPage } from './pages/PublicCpPortfolioPage';
+import { ShowcasePage } from './pages/ShowcasePage';
+import { PitchDeckPage } from './pages/PitchDeckPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,6 +35,10 @@ export default function App() {
       <DataLoadingBar />
       <BrowserRouter>
         <Routes>
+          <Route path="/pitch" element={<PitchDeckPage />} />
+          <Route path="/deck" element={<PitchDeckPage />} />
+          <Route path="/showcase" element={<ShowcasePage />} />
+          <Route path="/demo" element={<ShowcasePage />} />
           <Route
             path="/onboarding"
             element={

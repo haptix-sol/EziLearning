@@ -118,15 +118,75 @@ export function DashboardPage() {
 
   return (
     <div className="animate-fade-in ez-page-zone">
+      {/* Superr Showcase Banner */}
+      <div
+        style={{
+          background: '#f7efe9',
+          border: '1.5px solid rgba(23, 23, 23, 0.12)',
+          borderRadius: 14,
+          padding: '14px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 12,
+          marginBottom: 24,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span
+            style={{
+              background: '#ff6f1e',
+              color: '#fdfbf9',
+              padding: '3px 10px',
+              borderRadius: 20,
+              fontSize: 11,
+              fontWeight: 700,
+            }}
+          >
+            new
+          </span>
+          <span style={{ fontSize: 14, color: '#2b1a07', fontWeight: 500 }}>
+            explore the unified lms demo showcase with live sandbox, mentoring &amp; analytics
+          </span>
+        </div>
+        <Link
+          to="/showcase"
+          style={{
+            background: '#fdfbf9',
+            border: '1.5px solid #171717',
+            borderRadius: 20,
+            padding: '6px 18px',
+            fontSize: 13,
+            fontWeight: 600,
+            color: '#171717',
+            textDecoration: 'none',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+          }}
+        >
+          view showcase <ArrowRight size={13} />
+        </Link>
+      </div>
+
       <section className="ez-overview-hero animate-slide-up" aria-labelledby="home-hero-title">
         <div className="ez-overview-hero__content">
           <div>
-            <span className="ez-overview-kicker">
-              <Sparkles size={14} strokeWidth={2} aria-hidden />
-              Overview workspace
-            </span>
-            <h1 id="home-hero-title">Build momentum with one clear flow</h1>
-            <p>
+            <h1
+              id="home-hero-title"
+              style={{
+                fontFamily: "'DM Serif Display', Georgia, serif",
+                fontSize: 'clamp(2rem, 3.5vw, 2.75rem)',
+                lineHeight: 1.15,
+                fontWeight: 600,
+                color: '#2b1a07',
+                margin: '0 0 14px',
+              }}
+            >
+              build momentum with one clear flow
+            </h1>
+            <p style={{ color: '#4a443c', fontSize: 16, lineHeight: 1.55, margin: '0 0 24px' }}>
               Plan your roadmap, finish daily levels, and practice with intent. Everything below is arranged by what you do
               next, not by feature noise.
             </p>

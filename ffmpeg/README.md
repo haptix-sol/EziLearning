@@ -13,7 +13,7 @@ Example (Gyan full build):
 
 1. Download a release from [Gyan FFmpeg builds](https://www.gyan.dev/ffmpeg/builds/) (e.g. `ffmpeg-release-essentials.zip`).
 2. Extract the zip.
-3. Rename the inner folder to `ffmpeg` and move it **into this directory** (next to this `README.md`), so `bin/ffmpeg.exe` lives at `EziLearnings/ffmpeg/bin/ffmpeg.exe`.
+3. Rename the inner folder to `ffmpeg` and move it **into this directory** (next to this `README.md`), so `bin/ffmpeg.exe` lives at `EziLearning/ffmpeg/bin/ffmpeg.exe`.
 
 Resolution is centralized in `backend/core/ffmpeg_paths.py` (used by video merge and TTS audio helpers).
 

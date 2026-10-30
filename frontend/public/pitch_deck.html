@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EziLearning — Investor & Campus Pitch Deck (16:9 Slides)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..600&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: 16in 9in;
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background: #e9e4df;
+      color: #171717;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Presentation Deck Controls Bar (Visible on screen, hidden in print) */
+    .deck-controls {
+      position: fixed;
+      top: 14px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: rgba(253, 251, 249, 0.95);
+      border: 1.5px solid #171717;
+      padding: 8px 16px;
+      border-radius: 30px;
+      box-shadow: rgba(0, 0, 0, 0.15) 0 4px 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .deck-btn {
+      background: #fdfbf9;
+      border: 1.2px solid #171717;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #171717;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .deck-btn:hover {
+      background: #ff6f1e;
+      color: #fff;
+      border-color: #ff6f1e;
+    }
+    .deck-btn.primary {
+      background: #ff6f1e;
+      color: #fff;
+      border-color: #ff6f1e;
+    }
+    .deck-btn.primary:hover {
+      background: #ce500a;
+      border-color: #ce500a;
+    }
+
+    .slide-counter {
+      font-size: 13px;
+      font-weight: 700;
+      color: #2b1a07;
+      min-width: 54px;
+      text-align: center;
+    }
+
+    /* Presentation Container */
+    .deck-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 0 80px;
+      gap: 36px;
+    }
+
+    /* Individual Slide: 16:9 Standard Presentation Slide */
+    .slide {
+      width: 1440px;
+      height: 810px; /* 16:9 widescreen ratio */
+      background: #fdfbf9;
+      border: 2px solid #171717;
+      border-radius: 16px;
+      box-shadow: rgba(0, 0, 0, 0.14) 0 16px 40px;
+      padding: 56px 64px 44px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      page-break-after: always;
+      box-sizing: border-box;
+    }
+
+    /* Top Brand & Category Header */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+
+    .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ff6f1e;
+      color: #fdfbf9;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: lowercase;
+    }
+
+    .slide-category {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b655c;
+      letter-spacing: 0.03em;
+    }
+
+    /* Typography */
+    h1, h2, h3 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      color: #2b1a07;
+      font-weight: 600;
+      line-height: 1.12;
+      margin: 0;
+    }
+
+    h1.hero-title {
+      font-size: 54px;
+      letter-spacing: -0.02em;
+      color: #2b1a07;
+      margin-bottom: 16px;
+    }
+
+    h2.slide-title {
+      font-size: 38px;
+      letter-spacing: -0.02em;
+      color: #2b1a07;
+      margin-bottom: 12px;
+    }
+
+    p.slide-sub {
+      font-size: 18px;
+      color: #4a443c;
+      line-height: 1.45;
+      max-width: 960px;
+      margin-bottom: 24px;
+    }
+
+    /* Slide Footer */
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1.5px solid rgba(23, 23, 23, 0.12);
+      padding-top: 14px;
+      margin-top: auto;
+      font-size: 12px;
+      color: #6b655c;
+    }
+
+    .slide-num-badge {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      text-align: center;
+      background: #2b1a07;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* Cards & Components */
+    .card {
+      background: #f7efe9;
+      border: 1.5px solid rgba(23, 23, 23, 0.14);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 22px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .metric-big {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 44px;
+      color: #ff6f1e;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .snapshot-frame {
+      background: #fff;
+      border: 1.5px solid #171717;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: rgba(0, 0, 0, 0.08) 0 4px 16px;
+    }
+
+    .snapshot-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Print Overrides for 1:1 PDF Slide Generation */
+    @media print {
+      body, html {
+        background: #fdfbf9 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .deck-controls {
+        display: none !important;
+      }
+      .deck-container {
+        padding: 0 !important;
+        gap: 0 !important;
+      }
+      .slide {
+        width: 16in !important;
+        height: 9in !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        page-break-inside: avoid !important;
+        padding: 48px 64px 36px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Controls Bar -->
+  <div class="deck-controls">
+    <button class="deck-btn" onclick="prevSlide()">‹ Previous</button>
+    <div class="slide-counter"><span id="currSlide">1</span> / 10</div>
+    <button class="deck-btn" onclick="nextSlide()">Next ›</button>
+    <button class="deck-btn" onclick="toggleTour()" id="tourBtn">▶ Start Audio Tour (Owlbert)</button>
+    <button class="deck-btn primary" onclick="window.print()">🖨 Print / Export PDF Slides</button>
+  </div>
+
+  <div class="deck-container">
+
+    <!-- SLIDE 1: COVER -->
+    <section class="slide" id="slide-1">
+      <div class="slide-header">
+        <div class="brand-tag">EziLearning Pitch Deck · Fall 2026</div>
+        <div class="slide-category">Series Seed &amp; Campus Rollout</div>
+      </div>
+
+      <div class="grid-2" style="flex: 1; align-items: center; gap: 40px;">
+        <div>
+          <h1 class="hero-title" style="font-size: 60px; margin-bottom: 20px;">
+            reimagining engineering education for the ai era
+          </h1>
+          <p class="slide-sub" style="font-size: 21px; margin-bottom: 32px;">
+            The unified practical learning workspace connecting academic theory, custom AI video lessons,
+            in-browser coding, and 24/7 WhatsApp mentoring into one tactile notebook.
+          </p>
+
+          <div style="display: flex; gap: 14px; align-items: center;">
+            <div style="background: #2b1a07; color: #fff; padding: 10px 20px; border-radius: 20px; font-weight: 600; font-size: 14px;">
+              Live Interactive Prototype
+            </div>
+            <div style="background: #f7efe9; border: 1.5px solid #171717; color: #171717; padding: 10px 20px; border-radius: 20px; font-weight: 600; font-size: 14px;">
+              WhatsApp Bot Active
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <div style="position: relative; text-align: center;">
+            <img src="/images/owlbert_avatar.jpg" alt="Owlbert the Owl Mascot" style="width: 240px; height: 240px; border-radius: 50%; border: 4px solid #171717; box-shadow: rgba(0,0,0,0.18) 0 12px 32px;">
+            <div style="position: absolute; bottom: 8px; right: 18px; background: #ff6f1e; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 700; border: 2px solid #171717;">
+              Owlbert 🦉
+            </div>
+          </div>
+          <div style="font-size: 15px; font-weight: 600; color: #2b1a07; margin-top: 18px;">
+            Meet Owlbert — The Official EziLearning AI Mentor
+          </div>
+          <div style="font-size: 13px; color: #6b655c; margin-top: 4px;">
+            Daily micro-challenges · Pocket doubt-clearing on WhatsApp
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <div>EziLearning Inc. · Confidential Pitch Presentation</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span>Cover</span>
+          <span class="slide-num-badge">1</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: THE PROBLEM -->
+    <section class="slide" id="slide-2">
+      <div class="slide-header">
+        <div class="brand-tag">The Problem Statement</div>
+        <div class="slide-category">Higher Education &amp; Workforce Crisis</div>
+      </div>
+
+      <div>
+        <h2 class="slide-title">the fragmented learning crisis in higher education</h2>
+        <p class="slide-sub">
+          Current Learning Management Systems (Canvas, Blackboard, Moodle) are passive lecture archives.
+          Practical coding, projects, competitions, and mentoring are shattered across separate tools.
+        </p>
+      </div>
+
+      <div class="grid-3" style="margin-bottom: 20px;">
+        <div class="card" style="border-top: 4px solid #ff6f1e;">
+          <h3 style="font-size: 20px; margin-bottom: 10px;">1. Passive Theory Silos</h3>
+          <p style="font-size: 14px; color: #4a443c; line-height: 1.5;">
+            Traditional college LMS platforms only deliver static PDF notes and multiple-choice quizzes.
+            Zero telemetry on whether a student can actually write clean, modular software.
+          </p>
+        </div>
+
+        <div class="card" style="border-top: 4px solid #3b82f6;">
+          <h3 style="font-size: 20px; margin-bottom: 10px;">2. Toolchain Fatigue</h3>
+          <p style="font-size: 14px; color: #4a443c; line-height: 1.5;">
+            Students juggle 6+ disconnected subscriptions: Coursera for video, LeetCode for algorithms,
+            GitHub for repos, WhatsApp for doubts, and Excel sheets for placement cells.
+          </p>
+        </div>
+
+        <div class="card" style="border-top: 4px solid #22c55e;">
+          <h3 style="font-size: 20px; margin-bottom: 10px;">3. The Readiness Deficit</h3>
+          <p style="font-size: 14px; color: #4a443c; line-height: 1.5;">
+            Institutions lack real-time visibility into actual candidate skills. Over 80% of engineering
+            graduates lack day-one production coding and systems readiness.
+          </p>
+        </div>
+      </div>
+
+      <div class="card" style="background: #2b1a07; color: #fdfbf9; padding: 18px 24px; display: flex; justify-content: space-around; align-items: center; border-radius: 12px;">
+        <div style="text-align: center;">
+          <div style="font-size: 32px; font-weight: 700; color: #ff6f1e; font-family: 'DM Serif Display', Georgia;">84%</div>
+          <div style="font-size: 12px; opacity: 0.85;">Graduates Unready for Day-1 Roles</div>
+        </div>
+        <div style="height: 36px; width: 1px; background: rgba(255,255,255,0.2);"></div>
+        <div style="text-align: center;">
+          <div style="font-size: 32px; font-weight: 700; color: #ff6f1e; font-family: 'DM Serif Display', Georgia;">6+ Tools</div>
+          <div style="font-size: 12px; opacity: 0.85;">Juggled Simultaneously by Students</div>
+        </div>
+        <div style="height: 36px; width: 1px; background: rgba(255,255,255,0.2);"></div>
+        <div style="text-align: center;">
+          <div style="font-size: 32px; font-weight: 700; color: #ff6f1e; font-family: 'DM Serif Display', Georgia;">32%</div>
+          <div style="font-size: 12px; opacity: 0.85;">Course Dropout Due to Generic Videos</div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <div>EziLearning · Market Problem &amp; Pain Points</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span>Problem</span>
+          <span class="slide-num-badge">2</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: THE SOLUTION -->
+    <section class="slide" id="slide-3">
+      <div class="slide-header">
+        <div class="brand-tag">The Solution</div>
+        <div class="slide-category">The Unified Architecture</div>
+      </div>
+
+      <div>
+        <h2 class="slide-title">meet ezilearning: one tactile notebook workspace</h2>
+        <p class="slide-sub">
+          We unify every stage of the student engineer journey — from first-year fundamentals to recruiter-verified portfolios —
+          into a single, game-inspired tactile interface.
+        </p>
+      </div>
+
+      <div class="grid-2" style="flex: 1; align-items: center; gap: 32px;">
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div class="card" style="padding: 16px 20px;">
+            <strong style="color: #2b1a07; font-size: 16px;">1. Adaptive AI Roadmaps:</strong>
+            <p style="font-size: 13px; color: #6b655c; margin-top: 4px;">Dynamic Directed Acyclic Graph (DAG) that personalizes pacing and prerequisites based on student role targets.</p>
+          </div>
+          <div class="card" style="padding: 16px 20px;">
+            <strong style="color: #2b1a07; font-size: 16px;">2. AI-Synthesized Video Lessons:</strong>
+            <p style="font-size: 13px; color: #6b655c; margin-top: 4px;">Personalized 90-second Manim/FFmpeg animations generated on-demand to bridge specific code comprehension gaps.</p>
+          </div>
+          <div class="card" style="padding: 16px 20px;">
+            <strong style="color: #2b1a07; font-size: 16px;">3. 24/7 WhatsApp AI Mentor:</strong>
+            <p style="font-size: 13px; color: #6b655c; margin-top: 4px;">Owlbert the Owl brings 8:30 AM daily 60-second micro-quizzes and instant doubt resolution directly to students' phones.</p>
+          </div>
+        </div>
+
+        <div class="snapshot-frame">
+          <img src="/images/snapshots/dashboard_overview.png" alt="EziLearning Dashboard Overview">
+          <div style="padding: 8px 12px; font-size: 11px; text-align: center; color: #6b655c; background: #fdfbf9;">
+            Live EziLearning Workspace: streak velocity, adaptive roadmaps, and instant coding arena.
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <div>EziLearning · Solution Architecture</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span>Solution</span>
+          <span class="slide-num-badge">3</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: VARIN VIDEO ENGINE -->
+    <section class="slide" id="slide-4">
+      <div class="slide-header">
+        <div class="brand-tag">Product Pillar 1</div>
+        <div class="slide-category">Personalized AI Video Synthesis</div>
+      </div>
+
+      <div>
+        <h2 class="slide-title">customized video lessons tailored to student gaps</h2>
+        <p class="slide-sub">
+          Instead of watching static 45-minute generic YouTube tutorials, students receive an AI-generated 90-second
+          visual explanation targeting their exact algorithmic misconception.
+        </p>
+      </div>
+
+      <div class="grid-2" style="flex: 1; align-items: center; gap: 32px;">
+        <div>
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="border-left: 3px solid #ff6f1e; padding-left: 14px;">
+              <div style="font-weight: 700; color: #2b1a07; font-size: 16px;">1. Telemetry Bottleneck Detection</div>
+              <p style="font-size: 13px; color: #6b655c; margin-top: 3px;">
+                Identifies off-by-one pointer errors, recursion stack overflow, or memory overhead in coding exercises.
+              </p>
+            </div>
+
+            <div style="border-left: 3px solid #3b82f6; padding-left: 14px;">
+              <div style="font-weight: 700; color: #2b1a07; font-size: 16px;">2. Automated Storyboarding &amp; Voiceover</div>
+              <p style="font-size: 13px; color: #6b655c; margin-top: 3px;">
+                Compiles targeted narration script and programmatic graph scene descriptions in 1.4 seconds.
+              </p>
+            </div>
+
+            <div style="border-left: 3px solid #22c55e; padding-left: 14px;">
+              <div style="font-weight: 700; color: #2b1a07; font-size: 16px;">3. 1080p Local High-Fidelity Rendering</div>
+              <p style="font-size: 13px; color: #6b655c; margin-top: 3px;">
+                Renders graph nodes, pointer animations, and step-by-step proofs synchronized with voice explanations.
+              </p>
+            </div>
+          </div>
+
+          <div style="margin-top: 24px; padding: 14px 18px; background: #f0faf4; border: 1.5px solid #22c55e; border-radius: 10px; font-size: 13px; color: #15803d; font-weight: 600;">
+            ✓ Proven 3.2x higher concept retention vs. passive video lectures
+          </div>
+        </div>
+
+        <div class="snapshot-frame">
+          <img src="/images/snapshots/video_lessons.png" alt="Embedded Varin Video Player">
+          <div style="padding: 8px 12px; font-size: 11px; text-align: center; color: #6b655c; background: #fdfbf9;">
+            Varin Video Player: AI-generated Dijkstra algorithm relaxation animation (Frame captured at 1:58).
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <div>EziLearning · Varin Video Synthesis Engine</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span>Video Engine</span>
+          <span class="slide-num-badge">4</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: WHATSAPP AI MENTOR -->
+    <section class="slide" id="slide-5">
+      <div class="slide-header">
+        <div class="brand-tag">Product Pillar 2</div>
+        <div class="slide-category">Always-On Pocket Mentoring</div>
+      </div>
+
+      <div>
+        <h2 class="slide-title">pocket mentoring on whatsapp with owlbert 🦉</h2>
+        <p class="slide-sub">
+          Students spend hours away from computers. EziLearning builds daily learning habits by bringing quizzes
+          and doubt-clearing directly to WhatsApp — with zero friction or app install required.
+        </p>
+      </div>
+
+      <div class="grid-2" style="flex: 1; align-items: center; gap: 32px;">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="card">
+            <h3 style="font-size: 17px; margin-bottom: 6px; color: #ff6f1e;">☀️ Daily 8:30 AM 60-Second Micro-Challenges</h3>
+            <p style="font-size: 13px; color: #4a443c; line-height: 1.5;">
+              Owlbert sends a bite-sized algorithmic question to students' WhatsApp every morning.
+              Quick taps (A, B, C, D) award XP, keep streaks ablaze, and compound daily retention.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size: 17px; margin-bottom: 6px; color: #22c55e;">💬 Instant Photo &amp; Voice Doubt Clearing</h3>
+            <p style="font-size: 13px; color: #4a443c; line-height: 1.5;">
+              Stuck during a lecture or late at night? Students snap a picture of code or record a voice query.
+              Owlbert explains edge cases and complexity Socratically right inside chat.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size: 17px; margin-bottom: 6px; color: #3b82f6;">🔗 QR-Code Pairing to Institutional Profile</h3>
+            <p style="font-size: 13px; color: #4a443c; line-height: 1.5;">
+              One-click WhatsApp linking securely synchronizes quiz answers, streak milestones, and telemetry
+              back to the student's campus LMS passport.
+            </p>
+          </div>
+        </div>
+
+        <div class="snapshot-frame">
+          <img src="/images/snapshots/whatsapp_mentor.png" alt="WhatsApp Simulator with Owlbert">
+          <div style="padding: 8px 12px; font-size: 11px; text-align: center; color: #6b655c; background: #fdfbf9;">
+            Live WhatsApp Simulator: Owlbert's interactive BST quiz flow with instant XP &amp; streak tracking.
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <div>EziLearning · WhatsApp AI Mentor with Owlbert</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span>WhatsApp Mentor</span>
+          <span class="slide-num-badge">5</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: CODING ARENA & PROJECTS -->
+    <section class="slide" id="slide-6">
+      <div class="slide-header">
+        <div class="brand-tag">Product Pillars 3 &amp; 4</div>
+        <div class="slide-category">In-Browser Coding &amp; Portfolio Proof</div>
+      </div>
+
+      <div>
+        <h2 class="slide-title">zero-friction coding &amp; recruiter-verified proof</h2>
+        <p class="slide-sub">
+          We move students from memorizing algorithm solutions to designing production-ready systems
+          with instantaneous runtime benchmarks and verified live portfolio pages.
+        </p>
+      </div>
+
+      <div class="grid-2" style="flex: 1; align-items: center; gap: 32px;">
+        <div class="snapshot-frame">
+          <img src="/images/snapshots/coding_arena.png" alt="Coding Arena Sandbox">
+          <div style="padding: 8px 12px; font-size: 11px; text-align: center; color: #6b655c; background: #fdfbf9;">
+            In-Browser Python 3.12 Coding Arena: live test execution, runtime &amp; memory profiling.
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div class="card">
+            <strong style="color: #2b1a07; font-size: 16px;">Zero-Install Cloud Sandbox:</strong>
+            <p style="font-size: 13px; color: #6b655c; margin-top: 4px;">
+              Executes Python, C++, Java, and TypeScript directly in the browser with automated test runners and memory profiling.
+            </p>
+          </div>
+
+          <div class="card">
+            <strong style="color: #2b1a07; font-size: 16px;">Architectural Project Milestones:</strong>
+            <p style="font-size: 13px; color: #6b655c; margin-top: 4px;">
+              Students build full-stack systems with step-by-step code checkpoints, pull request evaluations, and schema migrations.
+            </p>
+          </div>
+
+          <div class="card">
+            <strong style="color: #2b1a07; font-size: 16px;">Verified Recruiter Portfolio URLs:</strong>
+            <p style="font-size: 13px; color: #6b655c; margin-top: 4px;">
+              Generates cryptographic proof of code authorship, solving time, and platform contest ratings on one public link.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <div>EziLearning · Hands-on Coding &amp; Project Verification</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span>Coding &amp; Projects</span>
+          <span class="slide-num-badge">6</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: COMPETITIONS & READINESS INDEX -->
+    <section class="slide" id="slide-7">
+      <div class="slide-header">
+        <div class="brand-tag">Product Pillars 5 &amp; 6</div>
+        <div class="slide-category">Campus Leagues &amp; Placement Analytics</div>
+      </div>
+
+      <div>
+        <h2 class="slide-title">campus sprint leagues &amp; holistic readiness scoring</h2>
+        <p class="slide-sub">
+          Replacing arbitrary 0–100% course completion bars with an industry-calibrated Readiness Index
+          and weekly inter-college coding leagues.
+        </p>
+      </div>
+
+      <div class="grid-2" style="flex: 1; align-items: center; gap: 32px;">
+        <div>
+          <div style="font-size: 16px; font-weight: 700; color: #2b1a07; margin-bottom: 12px;">
+            The 5-Factor Readiness Index (0–100%):
+          </div>
+
+          <div style="display: grid; gap: 10px;">
+            <div style="background: #fdfbf9; border: 1.2px solid rgba(23,23,23,0.15); padding: 10px 14px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 600;">1. Algorithmic Mastery</span>
+              <span style="font-size: 12px; background: #ff6f1e; color: #fff; padding: 2px 8px; border-radius: 12px; font-weight: 700;">30% Weight</span>
+            </div>
+            <div style="background: #fdfbf9; border: 1.2px solid rgba(23,23,23,0.15); padding: 10px 14px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 600;">2. Project Architecture &amp; Commits</span>
+              <span style="font-size: 12px; background: #3b82f6; color: #fff; padding: 2px 8px; border-radius: 12px; font-weight: 700;">25% Weight</span>
+            </div>
+            <div style="background: #fdfbf9; border: 1.2px solid rgba(23,23,23,0.15); padding: 10px 14px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 600;">3. WhatsApp Streak Consistency</span>
+              <span style="font-size: 12px; background: #22c55e; color: #fff; padding: 2px 8px; border-radius: 12px; font-weight: 700;">20% Weight</span>
+            </div>
+            <div style="background: #fdfbf9; border: 1.2px solid rgba(23,23,23,0.15); padding: 10px 14px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 600;">4. AI Mock Interview Technical Communication</span>
+              <span style="font-size: 12px; background: #ff66cf; color: #fff; padding: 2px 8px; border-radius: 12px; font-weight: 700;">15% Weight</span>
+            </div>
+            <div style="background: #fdfbf9; border: 1.2px solid rgba(23,23,23,0.15); padding: 10px 14px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 600;">5. Live Job Market Skill Alignment</span>
+              <span style="font-size: 12px; background: #2b1a07; color: #fff; padding: 2px 8px; border-radius: 12px; font-weight: 700;">10% Weight</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="snapshot-frame">
+          <img src="/images/snapshots/roadmap_graph.png" alt="Adaptive Roadmap DAG">
+          <div style="padding: 8px 12px; font-size: 11px; text-align: center; color: #6b655c; background: #fdfbf9;">
+            Roadmap DAG: dynamic skill nodes, prerequisite unblocking, and verified milestone badging.
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <div>EziLearning · Competitions &amp; Readiness Index</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span>Analytics</span>
+          <span class="slide-num-badge">7</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: MARKET OPPORTUNITY -->
+    <section class="slide" id="slide-8">
+      <div class="slide-header">
+        <div class="brand-tag">Market Opportunity</div>
+        <div class="slide-category">TAM &amp; Why Now</div>
+      </div>
+
+      <div>
+        <h2 class="slide-title">a $34b global engineering workforce opportunity</h2>
+        <p class="slide-sub">
+          Engineering institutions face unprecedented accreditation pressure (NAAC, NBA, ABET)
+          while tech employers struggle with high candidate interview noise.
+        </p>
+      </div>
+
+      <div class="grid-3" style="margin-bottom: 24px;">
+        <div class="card" style="text-align: center;">
+          <div class="metric-big">$34.2B</div>
+          <div style="font-weight: 700; color: #2b1a07; font-size: 16px; margin-bottom: 6px;">Total Addressable Market</div>
+          <p style="font-size: 13px; color: #6b655c;">Global STEM higher-ed software, LMS upgrades, and workforce recruitment infrastructure.</p>
+        </div>
+
+        <div class="card" style="text-align: center;">
+          <div class="metric-big">4,200+</div>
+          <div style="font-weight: 700; color: #2b1a07; font-size: 16px; margin-bottom: 6px;">Target Engineering Colleges</div>
+          <p style="font-size: 13px; color: #6b655c;">Accredited institutions seeking automated coding labs and verified placement telemetry.</p>
+        </div>
+
+        <div class="card" style="text-align: center;">
+          <div class="metric-big">1.5M+</div>
+          <div style="font-weight: 700; color: #2b1a07; font-size: 16px; margin-bottom: 6px;">Annual Computer Science Grads</div>
+          <p style="font-size: 13px; color: #6b655c;">Undergraduates requiring daily algorithmic practice, project guidance, and placement support.</p>
+        </div>
+      </div>
+
+      <div class="card" style="border-left: 4px solid #ff6f1e;">
+        <h3 style="font-size: 17px; margin-bottom: 6px;">Why Now? The Generative AI Turning Point</h3>
+        <p style="font-size: 13.5px; color: #4a443c; line-height: 1.5; margin: 0;">
+          Until 2026, creating personalized video lessons and 24/7 dedicated human mentoring cost thousands of dollars per student.
+          With local automated render pipelines (Manim/FFmpeg) and conversational AI on WhatsApp, EziLearning delivers bespoke
+          visual tutoring at <strong>near-zero marginal cost</strong> per student.
+        </p>
+      </div>
+
+      <div class="slide-footer">
+        <div>EziLearning · Market Size &amp; Industry Timing</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span>Market</span>
+          <span class="slide-num-badge">8</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: BUSINESS MODEL -->
+    <section class="slide" id="slide-9">
+      <div class="slide-header">
+        <div class="brand-tag">Business Model</div>
+        <div class="slide-category">Monetization &amp; Flywheel</div>
+      </div>
+
+      <div>
+        <h2 class="slide-title">high-margin b2b2c model with compounding retention</h2>
+        <p class="slide-sub">
+          We monetize institutional campus contracts upfront while monetizing premium student tooling
+          and verified enterprise recruitment pipelines.
+        </p>
+      </div>
+
+      <div class="grid-3" style="margin-bottom: 24px;">
+        <div class="card">
+          <div style="font-size: 12px; color: #ff6f1e; font-weight: 700; text-transform: lowercase;">tier 1: institutional b2b</div>
+          <h3 style="font-size: 22px; margin: 4px 0 10px;">Campus Enterprise SaaS</h3>
+          <div style="font-size: 24px; font-weight: 700; color: #2b1a07; font-family: 'DM Serif Display'; margin-bottom: 8px;">$14–$28 <span style="font-size: 13px; font-family: 'Inter'; font-weight: 500; color: #6b655c;">/student/year</span></div>
+          <p style="font-size: 13px; color: #4a443c; line-height: 1.45;">
+            Institutional deployment with department analytics, automated coding lab tests, and accreditation compliance dashboards.
+          </p>
+        </div>
+
+        <div class="card">
+          <div style="font-size: 12px; color: #3b82f6; font-weight: 700; text-transform: lowercase;">tier 2: student pro b2c</div>
+          <h3 style="font-size: 22px; margin: 4px 0 10px;">Student Pro Pass</h3>
+          <div style="font-size: 24px; font-weight: 700; color: #2b1a07; font-family: 'DM Serif Display'; margin-bottom: 8px;">$9 <span style="font-size: 13px; font-family: 'Inter'; font-weight: 500; color: #6b655c;">/month</span></div>
+          <p style="font-size: 13px; color: #4a443c; line-height: 1.45;">
+            Unlimited on-demand AI video synthesis, prioritized 1-on-1 AI mock interviews, and advanced FAANG competition tracks.
+          </p>
+        </div>
+
+        <div class="card">
+          <div style="font-size: 12px; color: #22c55e; font-weight: 700; text-transform: lowercase;">tier 3: recruiter marketplace</div>
+          <h3 style="font-size: 22px; margin: 4px 0 10px;">Recruiter Matchmaking</h3>
+          <div style="font-size: 24px; font-weight: 700; color: #2b1a07; font-family: 'DM Serif Display'; margin-bottom: 8px;">15% <span style="font-size: 13px; font-family: 'Inter'; font-weight: 500; color: #6b655c;">placement fee</span></div>
+          <p style="font-size: 13px; color: #4a443c; line-height: 1.45;">
+            Employers skip first-round resume screening and interview pre-verified Grandmasters with cryptographic proof of skill.
+          </p>
+        </div>
+      </div>
+
+      <div class="card" style="background: #f7efe9; display: flex; justify-content: space-between; align-items: center; padding: 18px 24px;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 40px; height: 40px; border-radius: 50%; background: #ff6f1e; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700;">🔄</div>
+          <div>
+            <div style="font-weight: 700; font-size: 15px; color: #2b1a07;">The EziLearning Flywheel</div>
+            <div style="font-size: 12.5px; color: #6b655c;">Campus Adopts ➔ WhatsApp Streaks Engage Students ➔ Placement Success Doubles ➔ College Renews &amp; Expands</div>
+          </div>
+        </div>
+        <div style="font-size: 14px; font-weight: 700; color: #22c55e;">120%+ Net Revenue Retention</div>
+      </div>
+
+      <div class="slide-footer">
+        <div>EziLearning · Monetization &amp; Unit Economics</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span>Business Model</span>
+          <span class="slide-num-badge">9</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: VISION & ASK -->
+    <section class="slide" id="slide-10">
+      <div class="slide-header">
+        <div class="brand-tag">Roadmap &amp; Vision</div>
+        <div class="slide-category">Building the Future</div>
+      </div>
+
+      <div>
+        <h2 class="slide-title">join us in building real engineering momentum</h2>
+        <p class="slide-sub">
+          We have built and validated the live interactive prototype, video engine, and WhatsApp bot.
+          Now expanding to 50 flagship engineering institutions.
+        </p>
+      </div>
+
+      <div class="grid-3" style="margin-bottom: 24px;">
+        <div class="card">
+          <div style="font-size: 12px; color: #22c55e; font-weight: 700;">PHASE 1 (ACHIEVED)</div>
+          <h3 style="font-size: 18px; margin: 4px 0 8px;">Core Platform Live</h3>
+          <ul style="font-size: 13px; color: #4a443c; line-height: 1.5; padding-left: 18px;">
+            <li>Tactile Superr UI &amp; DAG Roadmaps</li>
+            <li>Varin AI Video Player (1:58 frame)</li>
+            <li>WhatsApp AI Mentor Owlbert simulator</li>
+            <li>In-browser Python 3.12 coding arena</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div style="font-size: 12px; color: #ff6f1e; font-weight: 700;">PHASE 2 (H1 2027)</div>
+          <h3 style="font-size: 18px; margin: 4px 0 8px;">50 Campus Pilot Rollout</h3>
+          <ul style="font-size: 13px; color: #4a443c; line-height: 1.5; padding-left: 18px;">
+            <li>Onboarding 50 engineering colleges</li>
+            <li>100,000 active daily student streaks</li>
+            <li>Inter-college algorithmic leagues</li>
+            <li>Campus placement cell admin portal</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div style="font-size: 12px; color: #3b82f6; font-weight: 700;">PHASE 3 (2027+)</div>
+          <h3 style="font-size: 18px; margin: 4px 0 8px;">Global Talent Protocol</h3>
+          <ul style="font-size: 13px; color: #4a443c; line-height: 1.5; padding-left: 18px;">
+            <li>Direct recruiter talent matchmaking</li>
+            <li>Global Grandmaster badge verification</li>
+            <li>Mobile apps (iOS &amp; Android) live</li>
+            <li>Enterprise hiring integrations</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Marker Orange Brand Band -->
+      <div style="background: #ff6f1e; color: #fff; padding: 22px 32px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; border: 2px solid #171717;">
+        <div>
+          <h2 style="color: #fff; font-size: 26px; margin-bottom: 4px;">ready to build real engineering momentum?</h2>
+          <p style="font-size: 14px; opacity: 0.95; margin: 0;">EziLearning is the unified ecosystem where engineering students learn, build, compete, and get hired.</p>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 13px; opacity: 0.9;">Demo available at:</div>
+          <div style="font-size: 15px; font-weight: 700; color: #fff;">localhost:5173/showcase</div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <div>EziLearning Inc. · All Rights Reserved © 2026</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span>Summary</span>
+          <span class="slide-num-badge">10</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    let currentSlideIndex = 1;
+    const totalSlides = 10;
+
+    function updateCounter() {
+      document.getElementById('currSlide').innerText = currentSlideIndex;
+    }
+
+    function scrollToSlide(idx) {
+      if (idx < 1) idx = 1;
+      if (idx > totalSlides) idx = totalSlides;
+      currentSlideIndex = idx;
+      updateCounter();
+      const elem = document.getElementById('slide-' + idx);
+      if (elem) {
+        elem.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function prevSlide() {
+      scrollToSlide(currentSlideIndex - 1);
+    }
+
+    function nextSlide() {
+      scrollToSlide(currentSlideIndex + 1);
+    }
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      }
+    });
+
+    // Audio Voiceover Guided Tour (Owlbert speech synthesis)
+    const tourScripts = [
+      "Welcome to EziLearning! I am Owlbert, your AI mentor. EziLearning is reimagining engineering education for the AI era by unifying theory, coding, custom video lessons, and 24/7 WhatsApp mentoring into one tactile notebook.",
+      "Today, universities face an acute crisis: Learning Management Systems only offer passive PDF reading and multiple-choice quizzes. Students juggle over six disconnected tools, and 84 percent of engineering graduates lack day-one coding readiness.",
+      "EziLearning replaces this fragmented toolchain with a single, game-inspired tactile workspace: adaptive AI roadmaps, customized video explainers, and real-time streak compounding.",
+      "Our Varin Video Engine generates bespoke 90-second animated explainer videos whenever a student struggles with an algorithm. Here on slide 4, you can see our Dijkstra relaxation explainer captured at 1 minute 58 seconds.",
+      "We bring mentoring directly to WhatsApp, where students already spend their time. Every morning at 8:30 AM, I send a 60-second quiz to fuel student streaks, and offer pocket doubt-clearing at zero friction.",
+      "In our in-browser coding arena, students execute Python and C++ algorithms with live test cases and memory benchmarks, building verifiable recruiter-proof portfolios.",
+      "We replace arbitrary course completion bars with our multi-factor Readiness Index, evaluating algorithmic mastery, real project commits, and daily streak consistency.",
+      "This addresses a 34 billion dollar market across 4,200 engineering colleges facing urgent placement accreditation mandates. Generative AI allows us to deliver personalized tutoring at near-zero marginal cost.",
+      "Our scalable business model combines annual campus SaaS subscriptions, student pro passes, and recruiter placement fees, delivering over 120 percent net revenue retention.",
+      "With our live prototype, video engine, and WhatsApp bot active, we are rolling out to 50 flagship engineering institutions. Thank you for joining us on EziLearning's mission to build real engineering momentum!"
+    ];
+
+    let isTourRunning = false;
+    let synth = window.speechSynthesis;
+
+    function toggleTour() {
+      if (!('speechSynthesis' in window)) {
+        alert("Speech synthesis is not supported in this browser.");
+        return;
+      }
+      if (isTourRunning) {
+        synth.cancel();
+        isTourRunning = false;
+        document.getElementById('tourBtn').innerText = '▶ Start Audio Tour (Owlbert)';
+      } else {
+        isTourRunning = true;
+        document.getElementById('tourBtn').innerText = '⏹ Stop Audio Tour';
+        playSlideAudio(currentSlideIndex);
+      }
+    }
+
+    function playSlideAudio(idx) {
+      if (!isTourRunning || idx > totalSlides) {
+        isTourRunning = false;
+        document.getElementById('tourBtn').innerText = '▶ Start Audio Tour (Owlbert)';
+        return;
+      }
+      scrollToSlide(idx);
+      synth.cancel();
+      const utterance = new SpeechSynthesisUtterance(tourScripts[idx - 1]);
+      utterance.rate = 1.0;
+      utterance.pitch = 1.05;
+
+      utterance.onend = () => {
+        if (isTourRunning && idx < totalSlides) {
+          setTimeout(() => {
+            playSlideAudio(idx + 1);
+          }, 1200);
+        } else {
+          isTourRunning = false;
+          document.getElementById('tourBtn').innerText = '▶ Start Audio Tour (Owlbert)';
+        }
+      };
+
+      synth.speak(utterance);
+    }
+  </script>
+</body>
+</html>

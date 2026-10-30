@@ -51,7 +51,7 @@ export function PublicCpPortfolioPage() {
         <h1>Profile not found</h1>
         <p className="text-muted">This public CP page is disabled or does not exist.</p>
         <Link to="/" className="btn btn-primary btn-sm" style={{ marginTop: 16 }}>
-          Back to EziLearnings
+          Back to EziLearning
         </Link>
       </div>
     );
@@ -60,7 +60,7 @@ export function PublicCpPortfolioPage() {
   return (
     <div className="ez-cp-public-wrap ez-cp-public-page animate-fade-in">
       <header className="ez-cp-public-header">
-        <p className="ez-cp-public-kicker">EziLearnings · CP portfolio</p>
+        <p className="ez-cp-public-kicker">EziLearning · CP portfolio</p>
         <h1>{data.display_name || 'Developer'}</h1>
         {data.headline ? <p className="ez-cp-public-headline">{data.headline}</p> : null}
       </header>
@@ -82,7 +82,7 @@ export function PublicCpPortfolioPage() {
       )}
 
       <footer className="ez-cp-public-footer">
-        <Link to="/">Create your own on EziLearnings</Link>
+        <Link to="/">Create your own on EziLearning</Link>
       </footer>
     </div>
   );

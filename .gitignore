@@ -12,7 +12,15 @@ backend/data/videos/
 # Repo-local npm cache (see root .npmrc)
 .npm-cache/
 
-# Secrets — never commit
+# Secrets & environment files — never commit
 .env
-backend/.env
-frontend/.env
+.env.*
+*.env
+**/.env
+**/.env.*
+!**/.env.example
+mobile/.env
+
+# Temporary artifacts
+temp_document.html
+*.log

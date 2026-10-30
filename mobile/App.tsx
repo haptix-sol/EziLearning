@@ -109,7 +109,7 @@ function HomeScreen() {
   return (
     <View style={styles.screen}>
       <StatusBar style="light" />
-      <Text style={styles.h1}>EziLearnings</Text>
+      <Text style={styles.h1}>EziLearning</Text>
       <Text style={styles.sub}>Same backend as the web app · {apiBase}</Text>
 
       <View style={styles.statusRow}>

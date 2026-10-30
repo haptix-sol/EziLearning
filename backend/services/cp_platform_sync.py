@@ -7,10 +7,10 @@ from typing import Any
 
 import httpx
 
-VERIFY_PREFIX = "EziLearnings verify:"
+VERIFY_PREFIX = "EziLearning verify:"
 
 HTTP_HEADERS = {
-    "User-Agent": "EziLearnings/1.0 (CP portfolio; +https://github.com/haptix)",
+    "User-Agent": "EziLearning/1.0 (CP portfolio; +https://github.com/haptix)",
     "Accept": "application/json, text/html;q=0.9,*/*;q=0.8",
 }
 

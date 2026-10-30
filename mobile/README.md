@@ -1,4 +1,4 @@
-# EziLearnings mobile (iOS & Android)
+# EziLearning mobile (iOS & Android)
 
 Single [Expo](https://expo.dev/) + React Native codebase that talks to the **same FastAPI backend** as `../frontend` (no duplicate server).
 

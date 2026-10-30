@@ -12,7 +12,7 @@ export function MinimalAppChrome({ children }: MinimalAppChromeProps) {
     <div className="ez-minimal-root">
       <header className="ez-minimal-topbar">
         <Link to="/" className="ez-minimal-brand">
-          EziLearnings
+          EziLearning
         </Link>
         <div className="ez-minimal-actions">
           <Link to="/" className="ez-topbar-pill">

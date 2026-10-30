@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 
 /**
- * Base URL for the EziLearnings FastAPI backend (same service as `frontend` VITE_API_URL).
+ * Base URL for the EziLearning FastAPI backend (same service as `frontend` VITE_API_URL).
  *
  * - **Android emulator**: `10.0.2.2` maps to the host machine’s loopback.
  * - **iOS simulator**: `localhost` reaches the host.
