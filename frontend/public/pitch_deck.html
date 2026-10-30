@@ -277,7 +277,6 @@
     <button class="deck-btn" onclick="prevSlide()">‹ Previous</button>
     <div class="slide-counter"><span id="currSlide">1</span> / 10</div>
     <button class="deck-btn" onclick="nextSlide()">Next ›</button>
-    <button class="deck-btn" onclick="toggleTour()" id="tourBtn">▶ Start Audio Tour (Owlbert)</button>
     <button class="deck-btn primary" onclick="window.print()">🖨 Print / Export PDF Slides</button>
   </div>
 
@@ -864,7 +863,7 @@
         </div>
         <div style="text-align: right;">
           <div style="font-size: 13px; opacity: 0.9;">Demo available at:</div>
-          <div style="font-size: 15px; font-weight: 700; color: #fff;">localhost:5173/showcase</div>
+          <div style="font-size: 15px; font-weight: 700; color: #fff;">ezilearning.haptix.in</div>
         </div>
       </div>
 
@@ -916,65 +915,6 @@
         prevSlide();
       }
     });
-
-    // Audio Voiceover Guided Tour (Owlbert speech synthesis)
-    const tourScripts = [
-      "Welcome to EziLearning! I am Owlbert, your AI mentor. EziLearning is reimagining engineering education for the AI era by unifying theory, coding, custom video lessons, and 24/7 WhatsApp mentoring into one tactile notebook.",
-      "Today, universities face an acute crisis: Learning Management Systems only offer passive PDF reading and multiple-choice quizzes. Students juggle over six disconnected tools, and 84 percent of engineering graduates lack day-one coding readiness.",
-      "EziLearning replaces this fragmented toolchain with a single, game-inspired tactile workspace: adaptive AI roadmaps, customized video explainers, and real-time streak compounding.",
-      "Our Varin Video Engine generates bespoke 90-second animated explainer videos whenever a student struggles with an algorithm. Here on slide 4, you can see our Dijkstra relaxation explainer captured at 1 minute 58 seconds.",
-      "We bring mentoring directly to WhatsApp, where students already spend their time. Every morning at 8:30 AM, I send a 60-second quiz to fuel student streaks, and offer pocket doubt-clearing at zero friction.",
-      "In our in-browser coding arena, students execute Python and C++ algorithms with live test cases and memory benchmarks, building verifiable recruiter-proof portfolios.",
-      "We replace arbitrary course completion bars with our multi-factor Readiness Index, evaluating algorithmic mastery, real project commits, and daily streak consistency.",
-      "This addresses a 34 billion dollar market across 4,200 engineering colleges facing urgent placement accreditation mandates. Generative AI allows us to deliver personalized tutoring at near-zero marginal cost.",
-      "Our scalable business model combines annual campus SaaS subscriptions, student pro passes, and recruiter placement fees, delivering over 120 percent net revenue retention.",
-      "With our live prototype, video engine, and WhatsApp bot active, we are rolling out to 50 flagship engineering institutions. Thank you for joining us on EziLearning's mission to build real engineering momentum!"
-    ];
-
-    let isTourRunning = false;
-    let synth = window.speechSynthesis;
-
-    function toggleTour() {
-      if (!('speechSynthesis' in window)) {
-        alert("Speech synthesis is not supported in this browser.");
-        return;
-      }
-      if (isTourRunning) {
-        synth.cancel();
-        isTourRunning = false;
-        document.getElementById('tourBtn').innerText = '▶ Start Audio Tour (Owlbert)';
-      } else {
-        isTourRunning = true;
-        document.getElementById('tourBtn').innerText = '⏹ Stop Audio Tour';
-        playSlideAudio(currentSlideIndex);
-      }
-    }
-
-    function playSlideAudio(idx) {
-      if (!isTourRunning || idx > totalSlides) {
-        isTourRunning = false;
-        document.getElementById('tourBtn').innerText = '▶ Start Audio Tour (Owlbert)';
-        return;
-      }
-      scrollToSlide(idx);
-      synth.cancel();
-      const utterance = new SpeechSynthesisUtterance(tourScripts[idx - 1]);
-      utterance.rate = 1.0;
-      utterance.pitch = 1.05;
-
-      utterance.onend = () => {
-        if (isTourRunning && idx < totalSlides) {
-          setTimeout(() => {
-            playSlideAudio(idx + 1);
-          }, 1200);
-        } else {
-          isTourRunning = false;
-          document.getElementById('tourBtn').innerText = '▶ Start Audio Tour (Owlbert)';
-        }
-      };
-
-      synth.speak(utterance);
-    }
   </script>
 </body>
 </html>

@@ -439,7 +439,7 @@ const htmlContent = `<!DOCTYPE html>
       One unified workspace: learn, build, compete, and get hired.
     </p>
     <div style="font-size: 8.5pt; opacity: 0.85;">
-      © 2026 EziLearning Inc. · Demo available at http://localhost:5173/showcase · WhatsApp Bot: EziLearning with Owlbert the Owl
+      © 2026 EziLearning Inc. · Demo available at https://ezilearning.haptix.in · WhatsApp Bot: EziLearning with Owlbert the Owl
     </div>
   </div>
 
