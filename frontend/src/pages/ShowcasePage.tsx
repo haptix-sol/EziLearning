@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ArrowRight,
   CheckCircle2,
   Flame,
   MessageCircle,
@@ -1351,47 +1350,40 @@ print(two_sum([2, 7, 11, 15], 9))  # -> [0, 1]`
               </div>
             </div>
 
-            <div style={{ marginTop: 28, display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+            <div style={{ marginTop: 28, display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center' }}>
               <button
-                onClick={() => setShowQrModal(true)}
+                disabled
+                title="WhatsApp pairing is disabled in this public demo showcase"
                 style={{
-                  background: '#25d366',
-                  color: '#fff',
-                  border: '1.5px solid #171717',
+                  background: '#e5e7eb',
+                  color: '#6b7280',
+                  border: '1.5px solid #d1d5db',
                   borderRadius: 20,
                   padding: '12px 24px',
                   fontSize: 14,
                   fontWeight: 600,
-                  cursor: 'pointer',
+                  cursor: 'not-allowed',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 8,
-                  boxShadow: 'rgba(0, 0, 0, 0.25) 0px 1px 2px 0px',
+                  opacity: 0.85,
                 }}
               >
-                <QrCode size={16} /> Connect Your WhatsApp
+                <QrCode size={16} /> Connect to WhatsApp (Disabled in Demo)
               </button>
 
-              <a
-                href="https://wa.me/?text=Hi%20Owlbert!%20Connect%20me%20to%20Easy%20Learning"
-                target="_blank"
-                rel="noopener noreferrer"
+              <span
                 style={{
-                  background: '#fdfbf9',
-                  border: '1.5px solid #171717',
-                  borderRadius: 20,
-                  padding: '12px 24px',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  color: '#171717',
-                  textDecoration: 'none',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 8,
+                  fontSize: 13,
+                  color: '#6b655c',
+                  background: '#f7efe9',
+                  padding: '8px 14px',
+                  borderRadius: 12,
+                  border: '1px solid rgba(23, 23, 23, 0.08)',
                 }}
               >
-                Open in WhatsApp Web <ArrowRight size={14} />
-              </a>
+                💡 Test Owlbert live using the interactive phone simulator on the left!
+              </span>
             </div>
           </div>
         </div>
