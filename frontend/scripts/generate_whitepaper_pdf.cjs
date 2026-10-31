@@ -211,24 +211,28 @@ const htmlContent = `<!DOCTYPE html>
       <div>
         <span class="badge">Architecture Whitepaper · Fall 2026</span>
         <h1 style="margin: 4pt 0 6pt;">ezilearning</h1>
-        <p style="font-size: 13pt; color: #2b1a07; font-weight: 600; margin: 0;">
+        <p style="font-size: 13pt; color: #2b1a07; font-weight: 600; margin: 0 0 6pt;">
           The Unified Engineering Skill &amp; Career Readiness Ecosystem
         </p>
+        <div style="font-size: 9.5pt; color: #ff6f1e; font-weight: 700;">
+          An Initiative by Haptix Solution Private Limited · Applied AI &amp; Frontier Tech
+        </div>
       </div>
-      <div style="text-align: right; font-size: 8.5pt; color: #6b655c; line-height: 1.4;">
-        <strong>EziLearning Technical Whitepaper</strong><br>
-        Style: Superr Warm Notebook<br>
-        Version: 2.4.0 (Live Prototype)
+      <div style="text-align: right; font-size: 8.5pt; color: #4a443c; line-height: 1.45; background: #f7efe9; padding: 8pt 12pt; border-radius: 8pt; border: 1.2px solid rgba(23,23,23,0.12);">
+        <strong style="color: #2b1a07;">Haptix Solution Private Limited</strong><br>
+        🏛️ STPI Backed (Software Technology Parks of India)<br>
+        🇮🇳 DPIIT Registered Startup (Govt. of India)<br>
+        🟢 NVIDIA Inception Program Partner
       </div>
     </div>
   </div>
 
   <!-- SECTION 1: EXECUTIVE SUMMARY & PROBLEM STATEMENT -->
-  <h2>1. Executive Summary &amp; The Problem Statement</h2>
+  <h2>1. Executive Summary &amp; The Indian Higher Education Context</h2>
   <p>
-    Higher education and engineering institutions worldwide face an acute crisis of <strong>fragmented skill preparation</strong>.
-    Traditional Learning Management Systems (LMS) like Canvas, Blackboard, or Moodle are designed primarily for passive,
-    theoretical rote learning: PDF reading, static slides, and multiple-choice quizzes.
+    Across India's <strong>3,200+ AICTE-approved engineering institutions</strong>, over <strong>15+ Lakh (1.5 Million)</strong> engineering students graduate annually.
+    However, according to the National Employability Report and NASSCOM industry surveys, over <strong>84% of Indian engineering graduates</strong>
+    are unemployable in core software and frontier tech roles without 6 to 12 months of costly post-college private finishing schools.
   </p>
   
   <div class="card" style="border-left: 4pt solid #ff6f1e;">
@@ -244,16 +248,18 @@ const htmlContent = `<!DOCTYPE html>
   </div>
 
   <p>
-    As a result, an ambitious computer science student currently juggles up to six distinct subscriptions:
-    <strong>Coursera/Udemy</strong> for lectures, <strong>LeetCode/HackerRank</strong> for algorithmic coding,
-    <strong>GitHub</strong> for project repositories, <strong>WhatsApp/Slack</strong> for mentor queries,
-    and disconnected spreadsheets for campus placements. Context is shattered, momentum is lost, and institutional
-    placement cells lack real-time visibility into actual student competence.
+    Simultaneously, Indian engineering colleges face rigorous accreditation pressures from the <strong>National Board of Accreditation (NBA)</strong>
+    for Outcome-Based Education (OBE), <strong>NAAC</strong> institutional accreditation, and <strong>NIRF</strong> ranking criteria.
+    Traditional college LMS portals (Canvas, Blackboard, Moodle) function as static lecture archives with zero telemetry on whether
+    students can actually design, test, and write production-grade software.
   </p>
 
   <p>
-    <strong>EziLearning</strong> solves this dilemma by consolidating the entire lifecycle into a single tactile,
-    game-inspired notebook interface.
+    As a result, students juggle up to six disconnected tools: <strong>YouTube/Coursera</strong> for passive video,
+    <strong>LeetCode</strong> for algorithms, <strong>GitHub</strong> for code, and unorganized <strong>WhatsApp groups</strong> for doubt-clearing.
+    Developed by <strong>Haptix Solution Private Limited</strong> — an AI enablement and frontier tech company backed by <strong>STPI</strong>,
+    registered under <strong>DPIIT</strong>, and partnered with the <strong>NVIDIA Inception program</strong> — <strong>EziLearning</strong>
+    unifies the entire practical learning journey into one tactile, game-inspired notebook ecosystem.
   </p>
 
   <!-- SNAPSHOT 1: DASHBOARD OVERVIEW -->
@@ -438,8 +444,9 @@ const htmlContent = `<!DOCTYPE html>
       EziLearning bridges the gap between academic theory and high-growth industry careers.
       One unified workspace: learn, build, compete, and get hired.
     </p>
-    <div style="font-size: 8.5pt; opacity: 0.85;">
-      © 2026 EziLearning Inc. · Demo available at https://ezilearning.haptix.in · WhatsApp Bot: EziLearning with Owlbert the Owl
+    <div style="font-size: 8.5pt; opacity: 0.9;">
+      © 2026 Haptix Solution Private Limited · EziLearning Platform · STPI Backed · DPIIT Registered · NVIDIA Inception Partner<br>
+      Live Demo: https://ezilearning.haptix.in · Official AI Mentor: Owlbert the Owl 🦉
     </div>
   </div>
 
