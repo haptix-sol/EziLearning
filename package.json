@@ -1,0 +1,10 @@
+{
+  "name": "ezilearning",
+  "version": "1.0.0",
+  "private": true,
+  "description": "EziLearning - Unified Engineering Skill & Career Readiness Ecosystem",
+  "scripts": {
+    "build": "npm --prefix frontend run build",
+    "dev": "npm --prefix frontend run dev"
+  }
+}

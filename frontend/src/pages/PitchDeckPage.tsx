@@ -9,7 +9,7 @@ import {
 
 export function PitchDeckPage() {
   const [currentSlide, setCurrentSlide] = useState(1);
-  const totalSlides = 10;
+  const totalSlides = 9;
 
   const handleNext = () => {
     setCurrentSlide((prev) => Math.min(prev + 1, totalSlides));

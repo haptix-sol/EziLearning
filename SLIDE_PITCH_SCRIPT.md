@@ -129,25 +129,7 @@
 
 ---
 
-## Slide 9: Business Model & Flywheel
-* **Headline:** Scalable B2B2C model tailored for Indian higher education
-* **Visual Cue:** Point to the 3 monetization pillars (Campus Enterprise SaaS, Student Pro Pass, and Enterprise Talent Pipeline) and the bottom Flywheel.
-* **Target Time:** 25s
-
-### 🎙️ Word-for-Word Spoken Script:
-> *"Our commercial model is built on a high-margin, compounding B2B2C structure.*
-> 
-> *First, **Campus Enterprise SaaS**: annual institutional contracts providing college departments with automated lab exams, OBE compliance telemetry, and placement cell dashboards.*
-> 
-> *Second, **Student Pro Pass**: recurring direct student subscriptions for unlimited on-demand AI video synthesis, prioritized mock interviews, and advanced competition tracks.*
-> 
-> *Third, our **Enterprise Talent Pipeline**: tech employers engage our recruiter marketplace to hire pre-verified Grandmaster candidates with cryptographic proof of skill, cutting hiring time and interview noise.*
-> 
-> *This powers our compounding flywheel: campus onboarding drives student habit formation, placement rates double, and institutional contracts expand year after year."*
-
----
-
-## Slide 10: Institutional Backing & Vision
+## Slide 9: Institutional Backing & Vision
 * **Headline:** Backed by premier institutions to transform Indian tech education
 * **Visual Cue:** Point to the 4 institutional pillars (**STPI Backed**, **DPIIT Registered**, **NVIDIA Inception Partner**, **Frontier Tech & AI**) and the bottom banner with `ezilearning.haptix.in`.
 * **Target Time:** 25–30s

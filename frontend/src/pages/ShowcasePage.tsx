@@ -2,13 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
-  Award,
-  BookOpen,
   CheckCircle2,
-  Code2,
-  Compass,
   Flame,
-  Layers,
   MessageCircle,
   MessageSquare,
   Play,
@@ -16,10 +11,7 @@ import {
   Send,
   Sparkles,
   Target,
-  Trophy,
-  Users,
   Video,
-  Volume2,
 } from 'lucide-react';
 import {
   Bar,
@@ -95,7 +87,6 @@ const LEADERBOARD = [
 
 export function ShowcasePage() {
   const [activeStudent, setActiveStudent] = useState<DemoStudent>(DEMO_STUDENTS[0]);
-  const [activeVideoTopic, setActiveVideoTopic] = useState<'dijkstra' | 'lru' | 'dp'>('dijkstra');
   const [showQrModal, setShowQrModal] = useState(false);
 
   // Live Coding Sandbox State

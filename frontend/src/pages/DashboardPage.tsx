@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Compass, Flame, Sparkles, Target } from 'lucide-react';
+import { ArrowRight, Compass, Flame, Target } from 'lucide-react';
 import { api, type Progress, type LevelProgress } from '../lib/api';
 
 const EXPLORE_GROUPS: {
