@@ -41,6 +41,9 @@ class Settings(BaseSettings):
     openai_compatible_api_key: str | None = None
     openai_compatible_model: str | None = None
 
+    # Vercel service binding for internal cursor proxy service
+    proxy_url: str | None = None
+
     # Deprecated: use openai_compatible_* ; kept for existing .env files
     cursor_api_key: str | None = None
     cursor_api_url: str | None = None

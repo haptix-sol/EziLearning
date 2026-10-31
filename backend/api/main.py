@@ -3,7 +3,7 @@ import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -60,19 +60,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(resumes.router)
-app.include_router(challenges.router)
-app.include_router(questions.router)
-app.include_router(executions.router)
-app.include_router(progress.router)
-app.include_router(content.router)
-app.include_router(study.router)
-app.include_router(jobs.router)
-app.include_router(levels.router)
-app.include_router(gmail.router)
-app.include_router(onboarding.router)
-app.include_router(roadmap.router)
-app.include_router(cp_portfolio.router)
+_routers = [
+    resumes.router,
+    challenges.router,
+    questions.router,
+    executions.router,
+    progress.router,
+    content.router,
+    study.router,
+    jobs.router,
+    levels.router,
+    gmail.router,
+    onboarding.router,
+    roadmap.router,
+    cp_portfolio.router,
+]
+
+api_router = APIRouter(prefix="/api")
+for r in _routers:
+    api_router.include_router(r)
+    app.include_router(r)
+
+app.include_router(api_router)
 
 # Serve prerendered animations (binary-search.mp4, bubble-sort.mp4, etc.)
 _animations_dir = Path(__file__).resolve().parent.parent / "static" / "animations"
@@ -93,6 +102,7 @@ def handle_app_exception(request, exc: AppException):
 
 
 @app.get("/health")
+@api_router.get("/health")
 def health():
     from services.ai.factory import get_llm_provider
 
@@ -101,6 +111,7 @@ def health():
 
 
 @app.get("/health/deps")
+@api_router.get("/health/deps")
 def health_deps():
     """Support/debug: resolved tool paths (avoid exposing in production without auth)."""
     from services.ai.factory import get_llm_provider

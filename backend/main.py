@@ -10,6 +10,7 @@ from __future__ import annotations
 import sys
 
 import uvicorn
+from api.main import app
 
 
 def main() -> None:

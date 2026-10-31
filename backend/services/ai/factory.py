@@ -42,6 +42,17 @@ def _bedrock_ready() -> bool:
     return bool(mid and region)
 
 
+def _resolve_compat_base_url() -> str | None:
+    if settings.openai_compatible_base_url:
+        return settings.openai_compatible_base_url.strip()
+    if settings.cursor_api_url:
+        return settings.cursor_api_url.strip()
+    if settings.proxy_url:
+        base = settings.proxy_url.rstrip("/")
+        return f"{base}/v1" if not base.endswith("/v1") else base
+    return None
+
+
 @lru_cache(maxsize=1)
 def get_llm_provider() -> LLMProvider | None:
     """Single cached provider for the process. Clear cache in tests via ``get_llm_provider.cache_clear()``."""
@@ -64,7 +75,7 @@ def get_llm_provider() -> LLMProvider | None:
         return None
 
     if mode in ("openai_compatible", "cursor_proxy"):
-        compat_url = (settings.openai_compatible_base_url or settings.cursor_api_url or "").strip()
+        compat_url = (_resolve_compat_base_url() or "").strip()
         compat_key = (settings.openai_compatible_api_key or settings.cursor_api_key or "").strip()
         compat_model = (settings.openai_compatible_model or settings.cursor_api_model or "gpt-4o-mini").strip()
         if compat_url:
@@ -109,7 +120,7 @@ def get_llm_provider() -> LLMProvider | None:
             default_max_tokens=4096,
         )
 
-    compat_url = (settings.openai_compatible_base_url or settings.cursor_api_url or "").strip()
+    compat_url = (_resolve_compat_base_url() or "").strip()
     compat_key = (settings.openai_compatible_api_key or settings.cursor_api_key or "").strip()
     compat_model = (settings.openai_compatible_model or settings.cursor_api_model or "gpt-4o-mini").strip()
     if compat_url:
