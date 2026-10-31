@@ -1,0 +1,8 @@
+# Ignore Python backend and proxy services during Vercel deployment
+backend/
+backend/**
+cursor2api/
+cursor2api/**
+.venv/
+__pycache__/
+*.pyc

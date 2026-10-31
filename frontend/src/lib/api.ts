@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { handleMockRoute } from './mockService';
 
 const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:8000');
 
@@ -6,6 +7,44 @@ export const api = axios.create({
   baseURL: API_BASE,
   headers: { 'Content-Type': 'application/json' },
 });
+
+// Standalone mode: intercept requests when running on Vercel without a Python backend
+api.interceptors.request.use((config) => {
+  // If no external backend is specified, handle directly via standalone mock service
+  if (!import.meta.env.VITE_API_URL) {
+    const mockRes = handleMockRoute(config.url || '', (config.method || 'GET').toUpperCase(), config.data);
+    if (mockRes) {
+      config.adapter = async () => ({
+        data: mockRes.data,
+        status: mockRes.status,
+        statusText: 'OK',
+        headers: {},
+        config,
+      });
+    }
+  }
+  return config;
+});
+
+// Response fallback: if network request fails or 404s, fall back to mock service
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.config) {
+      const mockRes = handleMockRoute(error.config.url || '', (error.config.method || 'GET').toUpperCase(), error.config.data);
+      if (mockRes) {
+        return Promise.resolve({
+          data: mockRes.data,
+          status: mockRes.status,
+          statusText: 'OK',
+          headers: {},
+          config: error.config,
+        });
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export interface Challenge {
   id: string;
