@@ -130,18 +130,20 @@
 ---
 
 ## Slide 9: Business Model & Flywheel
-* **Headline:** High-margin B2B2C model tailored for Indian higher education
-* **Visual Cue:** Point to the 3 monetization tiers in INR (₹999–₹1,999 campus SaaS, ₹499/mo Pro Pass, ₹15k–₹25k placement fee) and the flywheel.
+* **Headline:** Scalable B2B2C model tailored for Indian higher education
+* **Visual Cue:** Point to the 3 monetization pillars (Campus Enterprise SaaS, Student Pro Pass, and Enterprise Talent Pipeline) and the bottom Flywheel.
 * **Target Time:** 25s
 
 ### 🎙️ Word-for-Word Spoken Script:
-> *"Our commercial model is designed specifically for the Indian academic ecosystem with compounding multi-channel revenue.*
+> *"Our commercial model is built on a high-margin, compounding B2B2C structure.*
 > 
-> *First, **Campus Enterprise SaaS** at **₹999 to ₹1,999 per student per year**, providing automated lab exams, OBE telemetry, and placement cell portals.*
+> *First, **Campus Enterprise SaaS**: annual institutional contracts providing college departments with automated lab exams, OBE compliance telemetry, and placement cell dashboards.*
 > 
-> *Second, direct student upgrades to our **₹499 monthly Pro Pass** (or ₹3,999 yearly) for unlimited on-demand AI video synthesis and prioritized AI mock interviews.*
+> *Second, **Student Pro Pass**: recurring direct student subscriptions for unlimited on-demand AI video synthesis, prioritized mock interviews, and advanced competition tracks.*
 > 
-> *Third, recruiter matchmaking fees of **₹15,000 to ₹25,000 per hire** for tech employers hiring verified Grandmaster talent. This powers a 120%+ net revenue retention flywheel as colleges renew and expand year after year."*
+> *Third, our **Enterprise Talent Pipeline**: tech employers engage our recruiter marketplace to hire pre-verified Grandmaster candidates with cryptographic proof of skill, cutting hiring time and interview noise.*
+> 
+> *This powers our compounding flywheel: campus onboarding drives student habit formation, placement rates double, and institutional contracts expand year after year."*
 
 ---
 
