@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Analytics } from '@vercel/analytics/react';
 import { DataLoadingBar } from './components/DataLoadingBar';
 import { MinimalAppChrome } from './components/Layout/MinimalAppChrome';
 import { DashboardLayout } from './components/Layout/DashboardLayout';
@@ -85,6 +86,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
+      <Analytics />
     </QueryClientProvider>
   );
 }
